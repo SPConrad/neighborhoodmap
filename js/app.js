@@ -23,15 +23,6 @@ var favoritePlaces = [
 	}
 ]
 
-var favoritePlace = {
-	name: 'Farmers\' Market West Seattle',
-	lat: 47.5610439,
-	lng: -122.3884025,
-	street: 'California Ave SW and SW Alaska St',
-	city: 'Seattle',
-	state: 'WA'
-}
-
 function initLocations(){
 	var bufferArray = ko.observableArray([]);
 
@@ -45,10 +36,11 @@ function initLocations(){
 var Model = function () {
     this.defaultLocations = initLocations();
 
-    this.startLocation = new Place(favoritePlace);
 };
 
 var Place = function(data) {
+	var self = this; 
+
 	var state = 'WA'
 	this.name = ko.observable(data.name);
 	this.lat = ko.observable(data.lat);
@@ -56,7 +48,12 @@ var Place = function(data) {
 	this.street = ko.observable(data.street);
 	this.city = ko.observable(data.city);
 	this.state = ko.observable(state);
-	//console.log(data);
+	this.address = ko.computed(function() { 
+		return self.street() + ", " + self. city() + ", " + self.state() 
+	});
+	this.requestAddress = ko.computed(function() {
+		return self.address().replace(" ", "+")
+	});
 }
 
 
@@ -71,10 +68,6 @@ var viewModel = function() {
 	self.model = new Model(); 
 
 	self.filter = ko.observable("");
-
-	self.startPlace = ko.computed(function() {
-		return self.model.startLocation;
-	});
 	//var MapApp = new initMap(); 
 
 	self.placesList = ko.computed(function() {

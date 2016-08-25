@@ -104,10 +104,15 @@ function initMap() {
 
 	var self = this;
 
+	
+
+
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 47.5629006, lng: -122.3889507}, 
 		zoom: 13,
 	});
+
+	service = new google.maps.places.PlacesService(map);
 
 	///Create bounds var
 	bounds = new google.maps.LatLngBounds;
@@ -119,13 +124,12 @@ function initMap() {
 	});
 
 	ViewModel.placesList().forEach(function(place){
-		locateAndCreateMarker(place);
+		locateAndCreateMarkers(place);
 		//console.log(place.name());
 	});
 
-	//console.log(ViewModel.startPlace().name);
 
-	locateAndCreateMarker(ViewModel.startPlace());
+
 }
 
 function mapsError(){
@@ -136,18 +140,17 @@ function mapsError(){
 ///
 var geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
 
-function locateAndCreateMarker(location) {
+function locateAndCreateMarkers(location) {
 	var geoCoder = new google.maps.Geocoder();
 	var request = {
-		address: location.name()
+		address: location.requestAddress()
 	};
-	console.log(request);
+
+
 
 	geoCoder.geocode(request, function(results, status){
-		
 		if (status === google.maps.GeocoderStatus.OK) {
-			console.log(results[0]);
-			createMarker(results[0]);
+			createMarker(results[0], location);
 		}
 		else {
 			alert("Geocode unsuccessful, error: " + status);
@@ -157,11 +160,10 @@ function locateAndCreateMarker(location) {
 
 
 
-
-function createMarker(location){
-		var lat = location.geometry.location.lat();
-		var lng = location.geometry.location.lng();
-		var address = location.formatted_address;
+function createMarker(results, locationInfo){
+		var lat = results.geometry.location.lat();
+		var lng = results.geometry.location.lng();
+		var address = results.formatted_address;
 		//console.log(placeData);
 
 		var icon = {
@@ -178,7 +180,7 @@ function createMarker(location){
 		//bounds.extend(marker.position);
 
 		google.maps.event.addListener(marker, 'click', function(){
-			showInfo(location);
+			showInfo(this, locationInfo);
 		});
 
 		//map.fitBounds(bounds);
@@ -193,7 +195,32 @@ function showMarker(marker){
 
 }
 
-function showInfo(location){
-	infoWindow.content = location.name;
+function getPlaces(location) {
+	///make request for places
+	request = {
+		location: { lat: location.lat(), lng: location.lng() },
+		radius: '100',
+		type: ['restaurant']
+	}
+
+	service.nearbySearch(request, function(results, status){
+		if (status === google.maps.places.PlacesServiceStatus.OK) {
+			results.forEach(function(result) {
+				console.log(result);
+			})
+		}
+	})
+
+	///populate the sidebar for that item
+}
+
+
+function showInfo(marker, location){
+	getPlaces(location);
+	infoWindow.marker = marker;
+	infoWindow.setContent(location.name());
+	console.log(infoWindow.content);
+	infoWindow.maxWidth = 500;
+	infoWindow.open(map, marker);
 }
 
