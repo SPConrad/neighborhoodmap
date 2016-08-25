@@ -1,2 +1,31 @@
+body {
+	height: 100vh;
+}
 
+.container {
+	height: 100%;
+	width: 100%;
+	padding: 0;
+}
 
+.row {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	margin: 0;
+}
+
+.places-list {
+	height: 100%;
+	width: 20%;
+}
+
+.map-container {
+	height: 100%;
+	width: 80%;
+}
+
+.map {
+	height: 100%;
+	width: 100%;
+}
