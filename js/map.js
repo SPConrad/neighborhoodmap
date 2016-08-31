@@ -100,6 +100,8 @@ var mapsApiKey;
 
 var startingLocation = {lat: 47.5629006, lng: -122.3889507};
 
+var nearbyPlaces;
+
 function initMap() {
 
 	var self = this;
@@ -197,6 +199,7 @@ function showMarker(marker){
 
 function getPlaces(location) {
 	///make request for places
+	var nearbyPlaces = [];
 	request = {
 		location: { lat: location.lat(), lng: location.lng() },
 		radius: '100',
@@ -206,8 +209,9 @@ function getPlaces(location) {
 	service.nearbySearch(request, function(results, status){
 		if (status === google.maps.places.PlacesServiceStatus.OK) {
 			results.forEach(function(result) {
-				console.log(result);
+				nearbyPlaces.push(result);
 			})
+			ViewModel.changeNearbyPlaces(nearbyPlaces);
 		}
 	})
 
@@ -219,7 +223,6 @@ function showInfo(marker, location){
 	getPlaces(location);
 	infoWindow.marker = marker;
 	infoWindow.setContent(location.name());
-	console.log(infoWindow.content);
 	infoWindow.maxWidth = 500;
 	infoWindow.open(map, marker);
 }

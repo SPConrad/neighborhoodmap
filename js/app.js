@@ -23,6 +23,16 @@ var favoritePlaces = [
 	}
 ]
 
+var favoritePlace = [
+	{
+		name: 'Farmers\' Market West Seattle',
+		lat: 47.5610439,
+		lng: -122.3884025,
+		street: 'California Ave SW and SW Alaska St',
+		city: 'Seattle'
+	}
+]
+
 function initLocations(){
 	var bufferArray = ko.observableArray([]);
 
@@ -35,19 +45,25 @@ function initLocations(){
 
 var Model = function () {
     this.defaultLocations = initLocations();
-
 };
 
 var Place = function(data) {
 	var self = this; 
 
 	var state = 'WA'
+	var lat = data.geometry ? data.geometry.location.lat() : data.lat;
+	var lng = data.geometry ? data.geometry.location.lng() : data.lng;
 	this.name = ko.observable(data.name);
-	this.lat = ko.observable(data.lat);
-	this.lng = ko.observable(data.lng);
+	this.lat = ko.observable(lat);
+	this.lng = ko.observable(lng);
 	this.street = ko.observable(data.street);
 	this.city = ko.observable(data.city);
 	this.state = ko.observable(state);
+
+	this.priceLevel = ko.observable(data.price_level);
+	this.ratings = ko.observable(data.rating); 
+	this.types = ko.observableArray(data.types);
+
 	this.address = ko.computed(function() { 
 		return self.street() + ", " + self. city() + ", " + self.state() 
 	});
@@ -57,23 +73,46 @@ var Place = function(data) {
 }
 
 
+
 var viewModel = function() {
-
-
 
 	///to avoid any confusion later
 	var self = this;
 
+	this.model = new Model(); 
 
-	self.model = new Model(); 
+    this.nearbyPlacesVisible = ko.observable(false);
 
-	self.filter = ko.observable("");
-	//var MapApp = new initMap(); 
+	this.nearbyPlaces = ko.observableArray([]);
 
-	self.placesList = ko.computed(function() {
+
+	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
-	})
+	}, this);
 
+	this.nearbyPlacesList = ko.computed(function() {
+		return self.nearbyPlaces(); 
+	}, this);
+
+	this.showNearbyPlaces = ko.computed(function() {
+		return self.nearbyPlacesVisible();
+	});
+
+
+	this.logPlaces = function(){
+		console.log(self.nearbyPlacesVisible());
+		console.log(self.nearbyPlacesList());
+		console.log(self.nearbyPlaces());
+	};
+
+
+	this.changeNearbyPlaces = function(nearbyPlaces){
+		self.nearbyPlaces = ko.observableArray([]);
+		nearbyPlaces.forEach(function(place){
+			self.nearbyPlaces().push(new Place(place));
+		});
+		self.nearbyPlacesVisible = ko.observable(true);
+	};
 
 
 }

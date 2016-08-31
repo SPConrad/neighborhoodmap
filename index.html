@@ -12,9 +12,18 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<ul data-bind="foreach: placesList" id="places-list" class="places-list">
-				<li data-bind="text: name"></li>
-			</ul>
+			<div class="places-list">
+				<span data-bind="text: nearbyPlacesVisible"></span>
+				<button data-bind="click: logPlaces">BUTTON</button>
+				<ul data-bind="foreach: placesList" id="places-list">
+					<li data-bind="text: name"></li>
+				</ul>
+				<div data-bind="visible: nearbyPlacesVisible">Hello World!
+					<ul data-bind="foreach: nearbyPlaces" id="nearby-places">
+						<li>Hello World</li>
+					</ul>
+				</div>
+			</div>
 			<div class="map-container">
 				<div class="map" id="map">
 					
