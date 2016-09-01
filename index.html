@@ -13,23 +13,17 @@
 	<div class="container">
 		<div class="row">
 			<div class="places-list">
-				<span data-bind="text: nearbyPlacesVisible"></span>
-				<span data-bind="text: nearbyPlacesList().length"></span>
-				<span data-bind="text: nearbyPlacesList.length"></span>
-				<button data-bind="click: logPlaces">Log places</button>
 				<ul data-bind="foreach: placesList" id="places-list">
 					<li data-bind="text: name"></li>
 				</ul>
-				<div data-bind="visible: nearbyPlacesVisible">
-					nearbyPlacesVisible True
-					<ul data-bind="foreach: nearbyPlacesList">
-						<li data-bind="text: name"></li>
-					</ul>
-				</div>
 				<div data-bind="visible: nearbyPlacesList().length > 0">
-					nearbyPlacesList().length > 0
-					<ul data-bind="foreach: nearbyPlacesList">Hello world!!!
-						<li data-bind="text: name"></li>
+					<ul data-bind="foreach: nearbyPlacesList">				<li><span data-bind="text: name"></span>
+							<ul>
+								<li data-bind="text: ratings"></li>
+								<li data-bind="text: priceLevel"></li>
+								<li data-bind="text: type"></li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>

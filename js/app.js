@@ -67,6 +67,7 @@ var Place = function(data) {
 	this.priceLevel = ko.observable(data.price_level);
 	this.ratings = ko.observable(data.rating); 
 	this.types = ko.observableArray(data.types);
+	this.type = ko.observable(data.types ? data.types[0] : "none");
 
 	this.address = ko.computed(function() { 
 		return self.street() + ", " + self. city() + ", " + self.state() 
@@ -89,7 +90,7 @@ var ViewModel = function() {
     	return self.model.nearbyVisible();
     })
 
-	this.nearbyPlacesList = ko.observableArray();
+	this.nearbyPlacesList = ko.observableArray([]);
 
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
@@ -105,9 +106,9 @@ var ViewModel = function() {
 
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
-		self.nearbyPlacesList();
+		self.nearbyPlacesList([]);
 		nearbyPlaces.forEach(function(place){
-			self.nearbyPlacesList().push(new Place(place));
+			self.nearbyPlacesList.push(new Place(place));
 		});
 		self.model.nearbyVisible(true);
 	};
