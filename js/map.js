@@ -125,7 +125,7 @@ function initMap() {
 		maxWidth: 200
 	});
 
-	ViewModel.placesList().forEach(function(place){
+	viewModel.placesList().forEach(function(place){
 		locateAndCreateMarkers(place);
 		//console.log(place.name());
 	});
@@ -189,13 +189,6 @@ function createMarker(results, locationInfo){
 
 		}; 
 
-function makeMarkerIcon(markerColor){
-
-}
-
-function showMarker(marker){
-
-}
 
 function getPlaces(location) {
 	///make request for places
@@ -211,7 +204,7 @@ function getPlaces(location) {
 			results.forEach(function(result) {
 				nearbyPlaces.push(result);
 			})
-			ViewModel.changeNearbyPlaces(nearbyPlaces);
+			viewModel.changeNearbyPlaces(nearbyPlaces);
 		}
 	})
 
