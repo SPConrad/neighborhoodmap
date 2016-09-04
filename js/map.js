@@ -98,20 +98,19 @@ var infoWindow;
 
 var mapsApiKey;
 
-var startingLocation = {lat: 47.5629006, lng: -122.3889507};
+var startingLocation = {lat: 47.609646, lng: -122.342117};
 
 var nearbyPlaces;
+
+var geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
 
 function initMap() {
 
 	var self = this;
 
-	
-
-
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: 47.5629006, lng: -122.3889507}, 
-		zoom: 13,
+		center: startingLocation, 
+		zoom: 12,
 	});
 
 	service = new google.maps.places.PlacesService(map);
@@ -125,12 +124,9 @@ function initMap() {
 		maxWidth: 200
 	});
 
-	viewModel.placesList().forEach(function(place){
+	viewModel.placesList().forEach(function(place, index){
 		locateAndCreateMarkers(place);
-		//console.log(place.name());
 	});
-
-
 
 }
 
@@ -139,9 +135,6 @@ function mapsError(){
 	///innerhtml to an error message
 }
 
-///
-var geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
-
 function locateAndCreateMarkers(location) {
 	var geoCoder = new google.maps.Geocoder();
 	var request = {
@@ -149,10 +142,9 @@ function locateAndCreateMarkers(location) {
 	};
 
 
-
 	geoCoder.geocode(request, function(results, status){
 		if (status === google.maps.GeocoderStatus.OK) {
-			createMarker(results[0], location);
+			createMarker(results[0], location);			
 		}
 		else {
 			alert("Geocode unsuccessful, error: " + status);
@@ -179,13 +171,15 @@ function createMarker(results, locationInfo){
 			position: {lat: lat, lng: lng}
 		})
 
-		//bounds.extend(marker.position);
+		bounds.extend(marker.position);
 
 		google.maps.event.addListener(marker, 'click', function(){
 			showInfo(this, locationInfo);
 		});
 
-		//map.fitBounds(bounds);
+
+
+		map.fitBounds(bounds);
 
 		}; 
 
@@ -195,7 +189,7 @@ function getPlaces(location) {
 	var nearbyPlaces = [];
 	request = {
 		location: { lat: location.lat(), lng: location.lng() },
-		radius: '100',
+		radius: '500',
 		type: ['restaurant']
 	}
 

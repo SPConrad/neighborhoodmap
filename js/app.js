@@ -1,38 +1,41 @@
 ///to be replaced by proper Google Maps Places objects
 var favoritePlaces = [
 	{
-		name: 'Seattle Fish Company, West Seattle',
-		lat: 47.5636926,
-		lng: -122.3871439,
-		street: '4435 California Ave SW',
+		name: 'Space Needle',
+		street: '400 Broad St',
+		lat: 47.37137,
+		lng: -122.20574,
 		city: 'Seattle'
 	},
 	{
-		name: 'Pagliacci Pizza, West Seattle',
-		lat: 47.5633709,
-		lng: -122.3875602,
-		street: '4449 California Ave SW',
+		name: 'Gas Works Park',		
+		lat: 47.654686,
+		lng: -122.335205,
+		street: '2101 N Northlake Way',
 		city: 'Seattle'
 	},
 	{
 		name: 'Farmers\' Market West Seattle',
-		lat: 47.5610439,
-		lng: -122.3884025,
+		lat: 47.56116,
+		lng: -122.386807,
 		street: 'California Ave SW and SW Alaska St',
 		city: 'Seattle'
-	}
-]
-
-var favoritePlace = [
+	},
 	{
-		name: 'Farmers\' Market West Seattle',
-		lat: 47.5610439,
-		lng: -122.3884025,
-		street: 'California Ave SW and SW Alaska St',
+		name: 'Volunteer Park',
+		lat: 47.630056,
+		lng: -122.314932,
+		street: '1247 15th Ave E',
+		city: 'Seattle'
+	},
+	{
+		name: 'Seward Park',
+		lat: 47.55067,
+		lng: -122.256290,
+		street: '5900 Lake Washington Blvd S',
 		city: 'Seattle'
 	}
 ]
-
 var initLocations = function(){
 	var bufferArray = ko.observableArray([]);
 
@@ -65,6 +68,15 @@ var Place = function(data) {
 	this.state = ko.observable(state);
 
 	this.priceLevel = ko.observable(data.price_level);
+
+	this.priceText = ko.computed(function(){
+		var text = "$";	
+		if(typeof(self.priceLevel()) === 'number'){
+			return text.repeat(self.priceLevel());
+		} else {
+			return "";
+		}
+	})
 	this.ratings = ko.observable(data.rating); 
 	this.types = ko.observableArray(data.types);
 	this.type = ko.observable(data.types ? data.types[0] : "none");
@@ -73,8 +85,10 @@ var Place = function(data) {
 		return self.street() + ", " + self. city() + ", " + self.state() 
 	});
 	this.requestAddress = ko.computed(function() {
-		return self.address().replace(" ", "+")
+		return self.address().replace(/ /g, "+")
 	});
+
+	this.nearbyPlacesHTML = ko.observable('<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#nearby-places">Button</button><div class="collapse" id="nearby-places"><li data-bind="text: rating"></li><li data-bind="text: priceLevel"></li><li data-bind="text: type"></li></div>')
 }
 
 
@@ -104,6 +118,11 @@ var ViewModel = function() {
 		//})
 	};
 
+	this.createPlace = function(defaultLocations) {
+		defaultLocations.forEach(function(place){
+			self.model.defaultLocations.push(new Place(place)); 
+		});
+	};
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
 		self.nearbyPlacesList([]);

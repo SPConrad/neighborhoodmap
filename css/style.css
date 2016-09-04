@@ -6,18 +6,27 @@ body {
 	height: 100%;
 	width: 100%;
 	padding: 0;
+	display: flex;
+}
+
+.btn {
+	white-space: normal;
 }
 
 .row {
 	height: 100%;
 	width: 100%;
-	display: flex;
 	margin: 0;
+	display: flex;
 }
 
 .places-list {
 	height: 100%;
 	width: 20%;
+}
+
+.nearby-places-list {
+
 }
 
 .map-container {
