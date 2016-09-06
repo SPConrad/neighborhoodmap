@@ -1,91 +1,3 @@
-/*var map;
-var address = "West Seattle Junction"
-
-function initMap(){
-	
-	var self = this;
-
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: 47.5629006, lng: -122.3889507}, 
-		zoom: 13,
-	});
-
-	///Create bounds var
-	var bounds = new google.maps.LatLngBounds;
-
-	///Create infowindow obj 
-	var infoWindow = new google.maps.InfoWindow({
-		content: '',
-		maxWidth: 200
-	});
-
-	self.placesSearch = function(placeData) {
-		var place = placeData().name;
-		var placesService = new google.maps.places.PlacesService(map);
-
-		placesService.textSearch({
-			query: place,
-			bounds: bounds
-		}), function(results, status){
-			if (status === google.maps.places.PlacesServiceStatus.OK) {
-				createMarker(results);
-			}
-		}
-	}
-
-	self.createMarker = function(placeData, setMarkerData){
-		var lat = placeData.geometry.location.lat();
-		var lng = placeData.geometry.location.lng();
-		var address = placeData.formatted_address;
-		//console.log(placeData);
-
-		var icon = {
-			///make a custom icon?
-		}
-
-		///add name after determining what part of address to get
-		var marker = new google.maps.Marker({
-			map: map,
-			animation: google.maps.Animation.DROP,
-			position: {lat: lat, lng: lng}
-		})
-
-		//bounds.extend(marker.position);
-
-		google.maps.event.addListener(marker, 'click', function(){
-			setInfoWindow(marker, address, infowindow);
-		});
-
-		//map.fitBounds(bounds);
-
-		}; 
-
-
-		self.geoCodeAddress = function(locationNames, googleData){
-			var gData;
-
-			var geoCoder = new google.maps.Geocoder();
-
-			var request = {
-				address: locationNames.name()
-			};
-
-			geoCoder.geocode(request, function(results, status){
-				if (status === google.maps.GeocoderStatus.OK) {
-					if (typeof googleData === "function") {
-						console.log(results);
-						googleData(results[0]);
-					}
-				}
-				else {
-					alert("Geocode unsuccessful, error: " + status);
-				}
-			})
-		}
-
-};*/
-
-
 var bounds;
 
 var map;
@@ -177,37 +89,52 @@ function createMarker(results, locationInfo){
 			showInfo(this, locationInfo);
 		});
 
-
-
 		map.fitBounds(bounds);
 
-		}; 
+	}; 
 
 
-function getPlaces(location) {
+function getPlaces(location, radius) {
 	///make request for places
 	var nearbyPlaces = [];
 	request = {
 		location: { lat: location.lat(), lng: location.lng() },
-		radius: '500',
+		radius: radius,
 		type: ['restaurant']
 	}
 
-	service.nearbySearch(request, function(results, status){
+	service.nearbySearch(request, function(results, status){		
 		if (status === google.maps.places.PlacesServiceStatus.OK) {
-			results.forEach(function(result) {
-				nearbyPlaces.push(result);
-			})
-			viewModel.changeNearbyPlaces(nearbyPlaces);
+			if (results.length < 10 && radius < 2000)
+			{
+				getPlaces(location, (radius += 1000))
+			} else {
+				for (var i = 0; i < 10; i++){
+					nearbyPlaces.push(results[i]);
+				}
+				viewModel.changeNearbyPlaces(nearbyPlaces);
+			}	
+		} else
+		{
+			if (radius < 3000)
+			{
+				getPlaces(location, (radius += 1000));
+			}
 		}
 	})
+	//weather.currentLatLngWeather(location);
+
+	weather.forecastCity(location);
 
 	///populate the sidebar for that item
 }
 
 
 function showInfo(marker, location){
-	getPlaces(location);
+	viewModel.clearPlaces(); 
+	var placesRadius = 2000;
+	getPlaces(location, placesRadius);
+	viewModel.setCurrentPlace(location);
 	infoWindow.marker = marker;
 	infoWindow.setContent(location.name());
 	infoWindow.maxWidth = 500;

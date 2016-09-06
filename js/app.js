@@ -39,7 +39,10 @@ var favoritePlaces = [
 var initLocations = function(){
 	var bufferArray = ko.observableArray([]);
 
+	var index = 0;
+
 	favoritePlaces.forEach(function(location) {
+		location.index = index++;
 		bufferArray().push(new Place(location));
 	});
 
@@ -50,6 +53,8 @@ var Model = function () {
     this.defaultLocations = initLocations();
     this.nearbyVisible = ko.observable(false);
     this.nearbyList = initLocations();
+    this.nearbyPlacesTypes 
+    this.currentPlace = this.defaultLocations[0];
 };
 
 var Place = function(data) {
@@ -59,7 +64,7 @@ var Place = function(data) {
 	var lat = data.geometry ? data.geometry.location.lat() : data.lat;
 	var lng = data.geometry ? data.geometry.location.lng() : data.lng;
 
-
+	this.index = ko.observable(data.index);
 	this.name = ko.observable(data.name);
 	this.lat = ko.observable(lat);
 	this.lng = ko.observable(lng);
@@ -100,15 +105,17 @@ var ViewModel = function() {
 
 	this.model = new Model(); 
 
-    this.nearbyPlacesVisible = ko.computed(function(){
-    	return self.model.nearbyVisible();
-    })
-
 	this.nearbyPlacesList = ko.observableArray([]);
 
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
 	}, this);
+
+
+
+	this.currentPlace = ko.observable(self.model.defaultLocations[0]);
+
+	this.hasCurrentPlace = true; 
 
 
 	this.logPlaces = function(){
@@ -119,10 +126,20 @@ var ViewModel = function() {
 	};
 
 	this.createPlace = function(defaultLocations) {
+		var index = 0;
 		defaultLocations.forEach(function(place){
+			place.index = index++;
 			self.model.defaultLocations.push(new Place(place)); 
 		});
 	};
+
+	this.nearbyPlacesVisible = ko.computed(function(){
+    	return self.model.nearbyVisible();
+    })
+
+    this.clearPlaces = function(){
+    	self.nearbyPlacesList([]);
+    }
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
 		self.nearbyPlacesList([]);
@@ -131,6 +148,11 @@ var ViewModel = function() {
 		});
 		self.model.nearbyVisible(true);
 	};
+
+	this.setCurrentPlace = function(location){
+		self.currentPlace(self.model.defaultLocations[location.index()]);
+		console.log(self.currentPlace().name());
+	}
 
 
 }
