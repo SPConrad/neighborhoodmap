@@ -66,13 +66,16 @@ function forecastByCity(location){
 
 function currentWeatherByCoord(location) {
 	var url = weatherApiUrlBase + currentWeatherUrl + 'lat=' + location.lat() + '&lon=' + location.lng() + weatherApiKey;
-
 	httpRequest(url, function(response) {
 		if (response.target.readyState === 4 && response.target.status === 200){
 			var weatherData = response.target.responseText;
 			var formattedWeatherData = JSON.parse(weatherData);
+			var kelvTemp = formattedWeatherData.main.temp;
 
+			formattedWeatherData.tempInFar = kelvTemp * (9/5) - 459.67; 
+			formattedWeatherData.tempInFar = formattedWeatherData.tempInFar.toFixed(0);
 
+			viewModel.setCurrentWeather(formattedWeatherData);
 
 			}
 

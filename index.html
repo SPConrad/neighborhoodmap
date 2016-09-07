@@ -14,11 +14,11 @@
 		<div class="row">
 			<div class="list-container">
 				<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-					<li><a href="#" data-bind="text: name" class="dropdown"></a>
+					<li><a href="#" data-bind="text: name"></a>
 					<!-- ko if: index() == $parent.currentPlace().index() -->
-						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" class="
-						nearby-places-list">
-							<li>
+						<div class="nearby-places-item collapse" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
+						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list">
+							<li id="nearby-places-item">
 								<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
 								<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
 									<ul>
@@ -29,9 +29,18 @@
 								</div>
 							</li>
 						</ul>
+					</div>
 					<!-- /ko -->
 					</li>
 				</ul>
+				<div class="weather-container">
+					<!-- ko with: currentWeather -->
+					<div data-bind="text: 'In ' + name + ' it is currently ' + tempInFar + '&deg fahrenheit'"></div>
+					<div data-bind="text: weather[0].main"></div>
+					<span data-bind="text: weather[0].description"></span>
+					<span data-bind="text: wind.speed"></span>
+					<!-- /ko -->
+				</div>
 			</div>
 			<div class="map-container">
 				<div class="map" id="map"></div>

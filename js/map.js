@@ -122,9 +122,9 @@ function getPlaces(location, radius) {
 			}
 		}
 	})
-	//weather.currentLatLngWeather(location);
+	weather.currentLatLngWeather(location);
 
-	weather.forecastCity(location);
+	//weather.forecastCity(location);
 
 	///populate the sidebar for that item
 }
@@ -134,10 +134,11 @@ function showInfo(marker, location){
 	viewModel.clearPlaces(); 
 	var placesRadius = 2000;
 	getPlaces(location, placesRadius);
-	viewModel.setCurrentPlace(location);
 	infoWindow.marker = marker;
 	infoWindow.setContent(location.name());
 	infoWindow.maxWidth = 500;
 	infoWindow.open(map, marker);
+	viewModel.setCurrentPlace(location);
+
 }
 

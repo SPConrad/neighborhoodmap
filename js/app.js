@@ -3,13 +3,13 @@ var favoritePlaces = [
 	{
 		name: 'Space Needle',
 		street: '400 Broad St',
-		lat: 47.37137,
-		lng: -122.20574,
+		lat: 47.620412,
+		lng: -122.349277,
 		city: 'Seattle'
 	},
 	{
 		name: 'Gas Works Park',		
-		lat: 47.654686,
+		lat: 47.654941,
 		lng: -122.335205,
 		street: '2101 N Northlake Way',
 		city: 'Seattle'
@@ -55,6 +55,8 @@ var Model = function () {
     this.nearbyList = initLocations();
     this.nearbyPlacesTypes 
     this.currentPlace = this.defaultLocations[0];
+    this.currentWeather = ko.observable();
+    this.weatherForecast = ko.observableArray(); 
 };
 
 var Place = function(data) {
@@ -143,16 +145,33 @@ var ViewModel = function() {
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
 		self.nearbyPlacesList([]);
+
 		nearbyPlaces.forEach(function(place){
 			self.nearbyPlacesList.push(new Place(place));
 		});
+
+		
 		self.model.nearbyVisible(true);
+
+		var nearbyItem = document.getElementById("nearby-places-item")
+		//nearbyItem.className = "collapse('show')";
 	};
 
 	this.setCurrentPlace = function(location){
 		self.currentPlace(self.model.defaultLocations[location.index()]);
 		console.log(self.currentPlace().name());
 	}
+
+
+	this.setCurrentWeather = function(weather){
+		self.model.currentWeather(weather);
+		console.log("set current weather");
+		console.log(self.model.currentWeather().weather[0].main);
+	}
+
+	this.currentWeather = ko.computed(function() {
+		return self.model.currentWeather();
+	})
 
 
 }
