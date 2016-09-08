@@ -12,11 +12,28 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class="list-container">
+			<div class="master-list-container">
+			<input id="search-text" type="text" placeholder="Search">
+			<button id="search-button" type="button">Search</button>\
+
+
+
+<div class="list-container">
+	<ul data-bind="foreach: placesTypes" id="places-type-list" class="places-type-list">
+		<li><a href="#" data-bind="text: key"></a></li>
+	</ul>
+</div>
+
+
+
+
+
+
+
 				<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
 					<li><a href="#" data-bind="text: name"></a>
 					<!-- ko if: index() == $parent.currentPlace().index() -->
-						<div class="nearby-places-item collapse" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
+						<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
 						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list">
 							<li id="nearby-places-item">
 								<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
@@ -35,10 +52,8 @@
 				</ul>
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
-					<div data-bind="text: 'In ' + name + ' it is currently ' + tempInFar + '&deg fahrenheit'"></div>
-					<div data-bind="text: weather[0].main"></div>
-					<span data-bind="text: weather[0].description"></span>
-					<span data-bind="text: wind.speed"></span>
+					<div data-bind="text: 'The temperature in ' + name + ' is ' + tempInFar + '&deg fahrenheit.'"></div>
+					<div data-bind="text: 'Current conditions are ' + readableCondition + ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></div>
 					<!-- /ko -->
 				</div>
 			</div>

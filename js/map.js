@@ -36,6 +36,12 @@ function initMap() {
 		maxWidth: 200
 	});
 
+	var searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
+	
+	searchBox.setBounds(bounds);
+
+
+
 	viewModel.placesList().forEach(function(place, index){
 		locateAndCreateMarkers(place);
 	});
