@@ -1,6 +1,27 @@
 ///to be replaced by proper Google Maps Places objects
 var favoritePlaces = [
 	{
+		name: 'Pike Place Market',
+		street: '1517 Pike Place',
+		lat: 47.6087256,
+		lng: -122.342756,
+		city: 'Seattle'
+	},
+	{
+		name: 'Centurylink Field',
+		street: '800 Occidental Ave S',
+		lat: 47.6158559,
+		lng: -122.3178045,
+		city: 'Seattle'
+	},
+	{
+		name: 'Octo Sushi',
+		street: '1621 12th Ave',
+		lat: 47.6158559,
+		lng: -122.3178045,
+		city: 'Seattle'
+	},
+	{
 		name: 'Space Needle',
 		street: '400 Broad St',
 		lat: 47.620412,
@@ -37,7 +58,104 @@ var favoritePlaces = [
 	}
 ]
 
-var placesTypes = [{ 'key': 'accounting'}, { 'key': 'airport'}, { 'key': 'amusement_park'}, { 'key': 'aquarium'}, { 'key': 'art_gallery'}, { 'key': 'atm'}, { 'key': 'bakery'}, { 'key': 'bank'}, { 'key': 'bar'}, { 'key': 'beauty_salon'}, { 'key': 'bicycle_store'}, { 'key': 'book_store'}, { 'key': 'bowling_alley'}, { 'key': 'bus_station'}, { 'key': 'cafe'}, { 'key': 'campground'}, { 'key': 'car_dealer'}, { 'key': 'car_rental'}, { 'key': 'car_repair'}, { 'key': 'car_wash'}, { 'key': 'casino'}, { 'key': 'cemetery'}, { 'key': 'church'}, { 'key': 'city_hall'}, { 'key': 'clothing_store'}, { 'key': 'convenience_store'}, { 'key': 'courthouse'}, { 'key': 'dentist'}, { 'key': 'department_store'}, { 'key': 'doctor'}, { 'key': 'electrician'}, { 'key': 'electronics_store'}, { 'key': 'embassy'}, { 'key': 'fire_station'}, { 'key': 'florist'}, { 'key': 'funeral_home'}, { 'key': 'furniture_store'}, { 'key': 'gas_station'}, { 'key': 'gym'}, { 'key': 'hair_care'}, { 'key': 'hardware_store'}, { 'key': 'hindu_temple'}, { 'key': 'home_goods_store'}, { 'key': 'hospital'}, { 'key': 'insurance_agency'}, { 'key': 'jewelry_store'}, { 'key': 'laundry'}, { 'key': 'lawyer'}, { 'key': 'library'}, { 'key': 'liquor_store'}, { 'key': 'local_government_office'}, { 'key': 'locksmith'}, { 'key': 'lodging'}, { 'key': 'meal_delivery'}, { 'key': 'meal_takeaway'}, { 'key': 'mosque'}, { 'key': 'movie_rental'}, { 'key': 'movie_theater'}, { 'key': 'moving_company'}, { 'key': 'museum'}, { 'key': 'night_club'}, { 'key': 'painter'}, { 'key': 'park'}, { 'key': 'parking'}, { 'key': 'pet_store'}, { 'key': 'pharmacy'}, { 'key': 'physiotherapist'}, { 'key': 'plumber'}, { 'key': 'police'}, { 'key': 'post_office'}, { 'key': 'real_estate_agency'}, { 'key': 'restaurant'}, { 'key': 'roofing_contractor'}, { 'key': 'rv_park'}, { 'key': 'school'}, { 'key': 'shoe_store'}, { 'key': 'shopping_mall'}, { 'key': 'spa'}, { 'key': 'stadium'}, { 'key': 'storage'}, { 'key': 'store'}, { 'key': 'subway_station'}, { 'key': 'synagogue'}, { 'key': 'taxi_stand'}, { 'key': 'train_station'}, { 'key': 'transit_station'}, { 'key': 'travel_agency'}, { 'key': 'university'}, { 'key': 'veterinary_care'}, { 'key': 'zoo'}];
+var placesTypes = [
+	{
+	    'key': 'restaurant', 
+	    'name': 'Restaurants'
+	},
+	{    
+		'key': 'airport', 
+	    'name': 'Airports'
+	},
+	{
+	    'key': 'aquarium', 
+	    'name': 'Aquariums'
+	},
+	{
+	    'key': 'art_gallery', 
+	    'name': 'Art Galleries'
+	},
+	{ 
+	    'key': 'atm', 
+	    'name': 'ATMs'
+	},
+	{
+	    'key': 'bakery', 
+	    'name': 'Bakeries'
+	},
+	{
+	    'key': 'bar',
+	    'name': 'Bars'
+	},
+	{
+	    'key': 'book_store', 
+	    'name': 'Book Stores'
+	},
+	{
+	    'key': 'bus_station', 
+	    'name': 'Bus Stations'
+	},
+	{
+	    'key': 'cafe', 
+	    'name': 'Cafes'
+	},
+	{
+	    'key': 'fire_station', 
+	    'name': 'Fire Stations'
+	},
+	{
+	    'key': 'hospital', 
+	    'name': 'Hospitals'
+	},
+	{
+	    'key': 'library', 
+	    'name': 'Libraries'
+	},
+	{
+	    'key': 'lodging', 
+	    'name': 'Lodging'
+	},
+	{
+	    'key': 'movie_theater', 
+	    'name': 'Movie Theaters'
+	},
+	{
+	    'key': 'museum', 
+	    'name': 'Museums'
+	},
+	{
+	    'key': 'park', 
+	    'name': 'Parks'
+	},
+	{
+	    'key': 'police', 
+	    'name': 'Police Stations'
+	},
+	{
+	    'key': 'post_office', 
+	    'name': 'Post Offices'
+	},
+	{
+	    'key': 'school', 
+	    'name': 'Schools'
+	},
+	{
+	    'key': 'stadium', 
+	    'name': 'Stadia'
+	},
+	{
+	    'key': 'subway_station', 
+	    'name': 'Subway Stations'
+	},
+	{
+	    'key': 'train_station', 
+	    'name': 'Train Stations'
+	},
+	{
+	    'key': 'veterinary_care', 
+	    'name': 'Veterinary Offices'
+	}
+]
 
 var loadFile= function(callback) {   
 
@@ -131,11 +249,8 @@ var Model = function () {
 
     this.defaultLocations = initLocations(favoritePlaces);
     this.nearbyVisible = ko.observable(false);
-    this.nearbyList = initLocations(favoritePlaces);
+    this.nearbyList = self.defaultLocations;
     this.placesTypes = ko.observableArray(placesTypes);
-    console.log(this.placesTypes);
-
-
     this.currentPlace = this.defaultLocations[0];
     this.currentWeather = ko.observable();
     this.weatherForecast = ko.observableArray(); 
@@ -151,7 +266,6 @@ var Model = function () {
 
 var Place = function(data) {
 	var self = this; 
-
 	var state = 'WA'
 	var lat = data.geometry ? data.geometry.location.lat() : data.lat;
 	var lng = data.geometry ? data.geometry.location.lng() : data.lng;
@@ -203,20 +317,23 @@ var ViewModel = function() {
 		return self.model.defaultLocations;
 	}, this);
 
+	
+	this.selectedPlaceType = ko.observable("");
 
+	this.placeType = ko.computed(function() {
+		return self.selectedPlaceType();
+	})
 
+	this.filterString = ko.observable("");
+	//this.searchString = ko.observable("");
 
 	this.currentPlace = ko.observable(self.model.defaultLocations[0]);
 
 	this.hasCurrentPlace = true; 
 
-
-	this.logPlaces = function(){
-		console.log(self.nearbyPlacesList().length);
-		//this.nearbyPlacesList().forEach(function(place){
-		//	console.log(place.name());
-		//})
-	};
+	this.searchPlaces = function(){
+		gMap.searchPlacesByType(self.currentPlace(), self.placeType().key);
+	}
 
 	this.createPlace = function(defaultLocations) {
 		var index = 0;
@@ -250,7 +367,6 @@ var ViewModel = function() {
 
 	this.setCurrentPlace = function(location){
 		self.currentPlace(self.model.defaultLocations[location.index()]);
-		console.log(self.currentPlace().name());
 	}
 
 
@@ -277,3 +393,5 @@ var ViewModel = function() {
 var viewModel = new ViewModel();
 
 ko.applyBindings(viewModel);
+
+

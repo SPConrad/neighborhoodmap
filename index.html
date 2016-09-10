@@ -13,28 +13,15 @@
 	<div class="container">
 		<div class="row">
 			<div class="master-list-container">
-			<input id="search-text" type="text" placeholder="Search">
-			<button id="search-button" type="button">Search</button>\
-
-
-
-<div class="list-container">
-	<ul data-bind="foreach: placesTypes" id="places-type-list" class="places-type-list">
-		<li><a href="#" data-bind="text: key"></a></li>
-	</ul>
-</div>
-
-
-
-
-
-
-
+				<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
+				<select data-bind="options: placesTypes, value: selectedPlaceType, optionsText: 'name', optionsAfterRender: " id="places-type-list" class="places-type-list">
+				</select>				
+				<button data-bind="click: $root.searchPlaces" id="search-button" type="button">Search</button>	
 				<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-					<li><a href="#" data-bind="text: name"></a>
+					<li><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
 					<!-- ko if: index() == $parent.currentPlace().index() -->
 						<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
-						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list">
+						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
 							<li id="nearby-places-item">
 								<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
 								<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
@@ -57,9 +44,7 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<div class="map-container">
-				<div class="map" id="map"></div>
-			</div>
+			<div class="map" id="map"></div>
 		</div>
 	</div>
 	
