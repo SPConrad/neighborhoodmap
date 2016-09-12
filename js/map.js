@@ -20,9 +20,15 @@ function Map()
 
 	this.nearbyPlaces;
 
-	this.smallerMark;
+	this.smallMarker;
 
 	this.largeMarker; 
+
+	this.defaultMarkers = [];
+
+	this.nearbyMarkers = [];
+
+	this.nearbyPlaces = [];
 
 	this.geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
 
@@ -44,9 +50,15 @@ function Map()
 			maxWidth: 200
 		});
 
-		self.smallMarker = new google.maps.Size(10, 16);
+		self.smallMarker = {
+			'type' : "small",
+			'markerSize': new google.maps.Size(10, 16)
+		}
 
-		self.largeMarker = new google.maps.Size(20, 32);
+		self.largeMarker = {
+			'type' : "large",
+			'markerSize': new google.maps.Size(20, 32)
+		}
 		
 
 		self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
@@ -104,51 +116,76 @@ function Map()
 			var address = results.formatted_address;
 			//console.log(placeData);
 
-			/*var icon = {
+			var icon = new google.maps.MarkerImage(
+				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
 			    // This marker is 20 pixels wide by 32 pixels high.
-			    size: size,
+			    self.largeMarker.markerSize,
 			    // The origin for this image is (0, 0).
-			    origin: new google.maps.Point(0, 0),
+			    new google.maps.Point(0, 0),
 			    // The anchor for this image is the base of the flagpole at (0, 32).
-			    anchor: new google.maps.Point(0, 32)
-			  };*/
+			    new google.maps.Point(10, 32),
+			    size.markerSize);
 
 			///add name after determining what part of address to get
 			var marker = new google.maps.Marker({
+				icon: icon,
 				map: self.map,
 				animation: google.maps.Animation.DROP,
 				position: {lat: lat, lng: lng}
 			})
 
 			self.bounds.extend(marker.position);
-
-			google.maps.event.addListener(marker, 'click', function(){
-				self.showInfo(this, locationInfo);
-			});
-
+			if (size.type === "large"){
+				google.maps.event.addListener(marker, 'click', function(){
+					self.showInfo(this, locationInfo.name());
+					var placesRadius = 1000; 
+					self.searchPlacesByArea(locationInfo, placesRadius);
+					viewModel.setCurrentPlace(locationInfo);
+				});
+			} else if (size.type === "small"){
+				google.maps.event.addListener(marker, 'click', function(){
+					console.log(this);
+					console.log(locationInfo);
+					console.log(results);
+					self.showInfo(this, results.name);
+				});
+			}
 
 			self.map.fitBounds(self.bounds);
+
+			if (size.type === "large") {
+				self.defaultMarkers.push(marker);
+			} else if (size.type === "small"){
+				self.nearbyMarkers.push(marker);
+			}
 
 		}; 
 
 
-	this.getPlaces = function(location, radius, placesType) {
+	this.getPlaces = function(location, radius, placesType, size) {
 		///make request for places
+
+		var self = this; 
+
 		if (placesType === "" || placesType === undefined) {
 			placesType = viewModel.placeType().key;
 		}
 
-		
 		request = {
 			location: { lat: location.lat(), lng: location.lng() },
 			radius: radius,
 			type: [placesType]
 		}
-		
 
-		var nearbyPlaces = [];
+		if (self.nearbyMarkers.length > 0){
+			self.nearbyMarkers.forEach(function(data){
+				data.setMap(null);
+			})
+		}
 
-		//console.log(request);
+
+
+		this.nearbyPlaces = [];		
 		
 		self.service.nearbySearch(request, function(results, status){	
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -157,11 +194,11 @@ function Map()
 					self.getPlaces(location, (radius += 1000), placesType)
 				} else {
 					var resultsSize = (results.length > 10) ? 10 : results.length;
-					for (var i = 0; i < resultsSize; i++){
-						nearbyPlaces.push(results[i]);
-						self.createMarker(results[i], "spork", self.smallMarker);
+					for (var i = 0; i < resultsSize; i++){											
+						self.createMarker(results[i], size, self.smallMarker);
+
 					}
-					viewModel.changeNearbyPlaces(nearbyPlaces);
+					viewModel.changeNearbyPlaces(self.nearbyPlaces);
 				}	
 			} else
 			{
@@ -179,15 +216,13 @@ function Map()
 	}
 
 
-	this.showInfo = function(marker, location){
+
+	this.showInfo = function(marker, name){
 		viewModel.clearPlaces(); 
-		var placesRadius = 2000;
-		self.searchPlacesByArea(location, placesRadius);
 		self.infoWindow.marker = marker;
-		self.infoWindow.setContent(location.name());
+		self.infoWindow.setContent(name);
 		self.infoWindow.maxWidth = 500;
 		self.infoWindow.open(self.map, marker);
-		viewModel.setCurrentPlace(location);
 
 	}
 

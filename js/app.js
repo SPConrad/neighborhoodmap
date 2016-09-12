@@ -254,7 +254,6 @@ var Model = function () {
     this.currentPlace = this.defaultLocations[0];
     this.currentWeather = ko.observable();
     this.weatherForecast = ko.observableArray(); 
-    
     this.weatherCodes = ko.observable();
 
     loadFile(function(response){
