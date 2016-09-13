@@ -50,20 +50,32 @@ function Map()
 			maxWidth: 200
 		});
 
-		self.smallMarker = {
-			'type' : "small",
-			'markerSize': new google.maps.Size(10, 16)
-		}
+		self.smallMarker = new google.maps.MarkerImage(
+				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
+			    // This marker is 20 pixels wide by 32 pixels high.
+			    new google.maps.Size(20, 32),
+			    // The origin for this image is (0, 0).
+			    new google.maps.Point(0, 0),
+			    // The anchor for this image is the base of the flagpole at (0, 32).
+			    new google.maps.Point(0, 32),
+			    ///scaled size
+			    new google.maps.Size(10, 16));
 
-		self.largeMarker = {
-			'type' : "large",
-			'markerSize': new google.maps.Size(20, 32)
-		}
+		self.largeMarker = new google.maps.MarkerImage(
+				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
+			    // This marker is 20 pixels wide by 32 pixels high.
+			    new google.maps.Size(20, 32),
+			    // The origin for this image is (0, 0).
+			    new google.maps.Point(0, 0),
+			    // The anchor for this image is the base of the flagpole at (0, 32).
+			    new google.maps.Point(10, 32),
+			    ///scaled size
+			    new google.maps.Size(20, 32));
 		
 
-		self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
+		//self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
 		
-		self.searchBox.setBounds(self.bounds);
+		//self.searchBox.setBounds(self.bounds);
 
 
 		document.getElementById('search-button').addEventListener('click', function(){
@@ -114,52 +126,59 @@ function Map()
 			var lat = results.geometry.location.lat();
 			var lng = results.geometry.location.lng();
 			var address = results.formatted_address;
-			//console.log(placeData);
 
-			var icon = new google.maps.MarkerImage(
-				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
-			    // This marker is 20 pixels wide by 32 pixels high.
-			    self.largeMarker.markerSize,
-			    // The origin for this image is (0, 0).
-			    new google.maps.Point(0, 0),
-			    // The anchor for this image is the base of the flagpole at (0, 32).
-			    new google.maps.Point(10, 32),
-			    size.markerSize);
-
+			
 			///add name after determining what part of address to get
 			var marker = new google.maps.Marker({
-				icon: icon,
+				icon: size,
 				map: self.map,
 				animation: google.maps.Animation.DROP,
 				position: {lat: lat, lng: lng}
 			})
-
 			self.bounds.extend(marker.position);
-			if (size.type === "large"){
-				google.maps.event.addListener(marker, 'click', function(){
-					self.showInfo(this, locationInfo.name());
-					var placesRadius = 1000; 
-					self.searchPlacesByArea(locationInfo, placesRadius);
-					viewModel.setCurrentPlace(locationInfo);
-				});
-			} else if (size.type === "small"){
-				google.maps.event.addListener(marker, 'click', function(){
-					console.log(this);
-					console.log(locationInfo);
-					console.log(results);
-					self.showInfo(this, results.name);
-				});
-			}
 
-			self.map.fitBounds(self.bounds);
-
-			if (size.type === "large") {
+			
+			if (size.scaledSize.height === 32){
 				self.defaultMarkers.push(marker);
-			} else if (size.type === "small"){
+				var placesRadius = 500;
+				google.maps.event.addListener(marker, 'click', function(){
+					self.showInfo(this, locationInfo.name());					 
+					self.searchPlacesByArea(locationInfo, placesRadius);
+					viewModel.setCurrentPlace(locationInfo);	
+					viewModel.clearPlaces();
+					self.setBounds(self.getNearbyMarkers());
+				});
+			} else if (size.scaledSize.height === 16){
+				google.maps.event.addListener(marker, 'click', function(){
+					self.showInfo(this, results.name);	
+					console.log(results, locationInfo, size);
+					$("#nearby-places-" + results.index).collapse();			
+				});
+
 				self.nearbyMarkers.push(marker);
+
 			}
 
+
+
+			//self.map.fitBounds(self.bounds);
 		}; 
+
+		this.getNearbyMarkers = function(){
+			return self.nearbyMarkers;
+		}
+
+
+	this.setBounds = function(markers){
+		console.log(markers);
+		self.newBounds = new google.maps.LatLngBounds;
+
+		markers.forEach(function(marker){
+			self.newBounds.extend(marker.position);
+		});
+		console.log(self.newBounds);
+		self.map.fitBounds(self.newBounds);
+	}
 
 
 	this.getPlaces = function(location, radius, placesType, size) {
@@ -183,18 +202,18 @@ function Map()
 			})
 		}
 
+		self.nearbyPlaces = [];
 
-
-		this.nearbyPlaces = [];		
-		
-		self.service.nearbySearch(request, function(results, status){	
+		self.service.nearbySearch(request, function(results, status){
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
 				if (results.length < 10 && radius < 3000)
 				{
-					self.getPlaces(location, (radius += 1000), placesType)
+					self.getPlaces(location, (radius += 500), placesType)
 				} else {
 					var resultsSize = (results.length > 10) ? 10 : results.length;
-					for (var i = 0; i < resultsSize; i++){											
+					for (var i = 0; i < resultsSize; i++){
+						results[i].index = i;	
+						self.nearbyPlaces.push(results[i]);				
 						self.createMarker(results[i], size, self.smallMarker);
 
 					}
@@ -204,7 +223,7 @@ function Map()
 			{
 				if (radius < 3000)
 				{
-					self.getPlaces(location, (radius += 1000), placesType);
+					self.getPlaces(location, (radius += 500), placesType);
 				}
 			}
 		})
@@ -218,7 +237,6 @@ function Map()
 
 
 	this.showInfo = function(marker, name){
-		viewModel.clearPlaces(); 
 		self.infoWindow.marker = marker;
 		self.infoWindow.setContent(name);
 		self.infoWindow.maxWidth = 500;

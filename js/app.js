@@ -3,15 +3,15 @@ var favoritePlaces = [
 	{
 		name: 'Pike Place Market',
 		street: '1517 Pike Place',
-		lat: 47.6087256,
-		lng: -122.342756,
+		lat: 47.6101,
+		lng: -122.3421,
 		city: 'Seattle'
 	},
 	{
 		name: 'Centurylink Field',
 		street: '800 Occidental Ave S',
-		lat: 47.6158559,
-		lng: -122.3178045,
+		lat: 47.5952,
+		lng: -122.3316,
 		city: 'Seattle'
 	},
 	{
@@ -299,6 +299,7 @@ var Place = function(data) {
 	});
 
 	this.nearbyPlacesHTML = ko.observable('<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#nearby-places">Button</button><div class="collapse" id="nearby-places"><li data-bind="text: rating"></li><li data-bind="text: priceLevel"></li><li data-bind="text: type"></li></div>')
+
 }
 
 
@@ -312,11 +313,12 @@ var ViewModel = function() {
 
 	this.nearbyPlacesList = ko.observableArray([]);
 
+
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
 	}, this);
 
-	
+
 	this.selectedPlaceType = ko.observable("");
 
 	this.placeType = ko.computed(function() {
@@ -325,6 +327,9 @@ var ViewModel = function() {
 
 	this.filterString = ko.observable("");
 	//this.searchString = ko.observable("");
+	this.filterStringLength = ko.computed(function(){
+		return self.filterString().length;
+	});
 
 	this.currentPlace = ko.observable(self.model.defaultLocations[0]);
 
@@ -334,24 +339,43 @@ var ViewModel = function() {
 		gMap.searchPlacesByType(self.currentPlace(), self.placeType().key);
 	}
 
-	this.createPlace = function(defaultLocations) {
+	this.showDefault = function(index){
+		if (self.filterStringLength() > 0){
+			if(self.model.defaultLocations[index()].name().includes(self.filterString())){
+				return true;
+			} else{
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
+
+	this.createPlace = function(locations) {
 		var index = 0;
-		defaultLocations.forEach(function(place){
+		console.log("createPlace");
+		locations.forEach(function(place){
 			place.index = index++;
 			self.model.defaultLocations.push(new Place(place)); 
 		});
 	};
+
+
 
 	this.nearbyPlacesVisible = ko.computed(function(){
     	return self.model.nearbyVisible();
     })
 
     this.clearPlaces = function(){
-    	self.nearbyPlacesList([]);
+
+    	if (self.nearbyPlacesList().length > 0){
+    		self.nearbyPlacesList.removeAll();
+		}
     }
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
-		self.nearbyPlacesList([]);
+		var self = this;
 
 		nearbyPlaces.forEach(function(place){
 			self.nearbyPlacesList.push(new Place(place));

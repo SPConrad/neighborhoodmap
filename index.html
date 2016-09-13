@@ -14,11 +14,9 @@
 		<div class="row">
 			<div class="master-list-container">
 				<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
-				<select data-bind="options: placesTypes, value: selectedPlaceType, optionsText: 'name', optionsAfterRender: " id="places-type-list" class="places-type-list">
-				</select>				
-				<button data-bind="click: $root.searchPlaces" id="search-button" type="button">Search</button>	
+
 				<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-					<li><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
+					<li data-bind="if: $parent.showDefault(index)"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
 					<!-- ko if: index() == $parent.currentPlace().index() -->
 						<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
 						<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
@@ -37,6 +35,9 @@
 					<!-- /ko -->
 					</li>
 				</ul>
+				<select data-bind="options: placesTypes, value: selectedPlaceType, optionsText: 'name', optionsAfterRender: " id="places-type-list" class="places-type-list">
+				</select>		
+				<button data-bind="click: $root.searchPlaces" id="search-button" type="button">Search Nearby</button>	
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
 					<div data-bind="text: 'The temperature in ' + name + ' is ' + tempInFar + '&deg fahrenheit.'"></div>
