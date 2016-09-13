@@ -368,6 +368,7 @@ var ViewModel = function() {
     })
 
     this.clearPlaces = function(){
+    	console.log("clear places");
 
     	if (self.nearbyPlacesList().length > 0){
     		self.nearbyPlacesList.removeAll();

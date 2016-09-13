@@ -1,5 +1,7 @@
 function Map()
 {	
+
+	///declare variables 
 	var self = this; 
 
 	this.bounds;
@@ -32,13 +34,14 @@ function Map()
 
 	this.geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
 
+	///init map
 	self.initMap = function() {
 		self.map = new google.maps.Map(document.getElementById('map'), {
 			center: self.startingLocation, 
 			zoom: 12,
 			enableTouchUI: true
 		});
-
+		///set up the places service
 		self.service = new google.maps.places.PlacesService(self.map);
 
 		///Create bounds var
@@ -50,6 +53,7 @@ function Map()
 			maxWidth: 200
 		});
 
+		///set up small and large markers
 		self.smallMarker = new google.maps.MarkerImage(
 				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
 			    // This marker is 20 pixels wide by 32 pixels high.
@@ -78,41 +82,47 @@ function Map()
 		//self.searchBox.setBounds(self.bounds);
 
 
-		document.getElementById('search-button').addEventListener('click', function(){
+		//document.getElementById('search-button').addEventListener('click', function(){
 			//executeSearch();
-		})
+		//})
 
 
-
+		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
 			self.locateAndCreateMarkers(place, self.largeMarker);
 		});
 
 	}
 
+	///when searching by a specific type
 	this.searchPlacesByType = function(currentPlace, placeType){
 		self.getPlaces(currentPlace, 2000, placeType);
 	}
 
+	///and when just searching by default type (restaurant)
 	this.searchPlacesByArea = function(location, radius){
 		self.getPlaces(location, radius, "", "");
 	}
 
-
+	///uh oh!
 	this.mapsError = function(){
 		var mapDiv = docuement.getElementById('map');
 		alert("Error!");
 		///innerhtml to an error message
 	}
 
+	///take in an array of locations, create markers
 	this.locateAndCreateMarkers = function(location, size) {
+		///set up geocoder (TODO: move this out to initmap?)
 		var geoCoder = new google.maps.Geocoder();
+		///create request
 		var request = {
 			address: location.requestAddress()
 		};
 
-
+		///fire request
 		geoCoder.geocode(request, function(results, status){
+			///response is good, send off the top result
 			if (status === google.maps.GeocoderStatus.OK) {
 				self.createMarker(results[0], location, size);			
 			}
@@ -123,6 +133,7 @@ function Map()
 	}
 
 	this.createMarker = function(results, locationInfo, size){
+			///prep the necessary variables
 			var lat = results.geometry.location.lat();
 			var lng = results.geometry.location.lng();
 			var address = results.formatted_address;
@@ -138,28 +149,36 @@ function Map()
 			self.bounds.extend(marker.position);
 
 			
+			///if it's a large marker, it is a default location. 
 			if (size.scaledSize.height === 32){
-				self.defaultMarkers.push(marker);
+				///starting radius is 500 meters
 				var placesRadius = 500;
+				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
-					self.showInfo(this, locationInfo.name());					 
+					///popup the name of the location
+					self.showInfo(this, locationInfo.name());
+					///clear old nearby places if they exist	
+					viewModel.clearPlaces();	
+					///do a standard search of nearby restaurants 			 
 					self.searchPlacesByArea(locationInfo, placesRadius);
+					///set the clicked marker as the current location
 					viewModel.setCurrentPlace(locationInfo);	
-					viewModel.clearPlaces();
-					self.setBounds(self.getNearbyMarkers());
-				});
+					///re-set the bounds so the new locations are 
+				});				
+				///add to default locations array
+				self.defaultMarkers.push(marker);
 			} else if (size.scaledSize.height === 16){
+				///if it's a small marker, it's a nearby place.
+				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
+					///show the name of the location
 					self.showInfo(this, results.name);	
-					console.log(results, locationInfo, size);
+					///toggle the detail dropdown in the locations list 
 					$("#nearby-places-" + results.index).collapse();			
 				});
-
+				///add to the 
 				self.nearbyMarkers.push(marker);
-
 			}
-
-
 
 			//self.map.fitBounds(self.bounds);
 		}; 
@@ -169,22 +188,18 @@ function Map()
 		}
 
 
-	this.setBounds = function(markers){
-		console.log(markers);
-		self.newBounds = new google.maps.LatLngBounds;
-
+	this.setBounds = function(){
+		var markers = self.getNearbyMarkers();
+		self.newBounds = new google.maps.LatLngBounds();
 		markers.forEach(function(marker){
 			self.newBounds.extend(marker.position);
 		});
-		console.log(self.newBounds);
 		self.map.fitBounds(self.newBounds);
 	}
 
-
+	///do a places search for nearby establishments
 	this.getPlaces = function(location, radius, placesType, size) {
 		///make request for places
-
-		var self = this; 
 
 		if (placesType === "" || placesType === undefined) {
 			placesType = viewModel.placeType().key;
@@ -215,8 +230,8 @@ function Map()
 						results[i].index = i;	
 						self.nearbyPlaces.push(results[i]);				
 						self.createMarker(results[i], size, self.smallMarker);
-
 					}
+					self.setBounds();
 					viewModel.changeNearbyPlaces(self.nearbyPlaces);
 				}	
 			} else
