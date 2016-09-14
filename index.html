@@ -16,23 +16,35 @@
 			<div class="master-list-container">
 				<div class="defaultList">		
 					<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
+					<span data-bind="text: getCurrentPlace"></span>
 					<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-						<li data-bind="if: $parent.showDefault(index)"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
-						<!-- ko if: index() == $parent.currentPlace().index() -->
+
+
+
+
+
+
+
+					
+						<!-- ko if: index() == $parent.getCurrentPlace() || $parent.getCurrentPlace() != -1 -->
+						<li data-bind="if: $parent.showDefault(index)"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}, attr: { 'class': 'favorite-place'}"></a>
 							<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
-							<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
-								<li id="nearby-places-item">
-									<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
-									<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
-										<ul>
-											<li data-bind="visible: ratings, text: 'Average rating ' + ratings() + ' out of 5'"></li>
-											<li data-bind="visible: priceText, text: 'Price level: ' + priceText()"></span></li>
-											<li data-bind="text: type"></li>
-										</ul>
-									</div>
-								</li>
-							</ul>
-						</div>
+								<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
+									<li id="nearby-places-item">
+										<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
+										<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
+											<ul>
+												<li data-bind="visible: ratings, text: 'Average rating ' + ratings() + ' out of 5'"></li>
+												<li data-bind="visible: priceText, text: 'Price level: ' + priceText()"></span></li>
+												<li data-bind="text: type"></li>
+											</ul>
+										</div>
+									</li>
+								</ul>
+							</div>
+						<!-- /ko -->
+						<!-- ko if: index() != $parent.getCurrentPlace() ** $aprent.getCurrentPlace() != 0 -->
+						<div class="hide-when-small">
 						<!-- /ko -->
 						</li>
 					</ul>
@@ -44,8 +56,11 @@
 				</div>
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
-					<div data-bind="text: 'The temperature in ' + name + ' is ' + tempInFar + '&deg fahrenheit.'"></div>
-					<div data-bind="text: 'Current conditions are ' + readableCondition + ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></div>
+					<span class="hide-when-small" data-bind="text: 'The temperature in ' + name + ' is '"></span>
+					<span data-bind="text: tempInFar + '&deg\F.'"></span>
+					<span class="hide-when-small">Current conditions are </span>
+					<span class="hide-when-small" data-bind="text: readableCondition"></span>
+					<span class="hide-when-small" data-bind="text: ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
 					<!-- /ko -->
 				</div>
 			</div>

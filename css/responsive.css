@@ -5,22 +5,38 @@
 
 	.master-list-container {
 		height: 25%;
-		margin: 0 auto;
+		width: 100%;
 		display: flex;
 	}
-	
+
 	.search {
+		visibility: hidden;
 		margin-top: auto;
 	}
 
-	.map-container {
-		height: 75%;
-		width: 100%;
+	.favorites-list {
+		width: 80%;
+		display: flex;
+	}
+
+	.nearby-places-list{
+		height: 100%;
 	}
 	
 	.map {
-		height: 100%;
+		height: 75%;
 		width: 100%;
+	}
+
+	.weather-container{
+		position: absolute;
+		right: 0;
+		width: 20%;
+		top: 0;
+	}
+
+	.hide-when-small {
+		visibility: hidden;
 	}
 }
 

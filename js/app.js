@@ -331,7 +331,24 @@ var ViewModel = function() {
 		return self.filterString().length;
 	});
 
-	this.currentPlace = ko.observable(self.model.defaultLocations[0]);
+	this.currentPlace = ko.observable("");
+
+	this.getCurrentPlace = ko.computed(function(){
+		if (self.currentPlace == ""){
+			return -1;
+		} else {
+			return self.currentPlace();
+		}
+	});
+
+	this.setCurrentPlace = function(location){
+		if (location === 'null'){
+			self.currentPlace(-1);
+		} else {
+			self.currentPlace(self.model.defaultLocations[location.index()]);
+		}
+	}
+
 
 	this.hasCurrentPlace = true; 
 
@@ -388,11 +405,6 @@ var ViewModel = function() {
 		var nearbyItem = document.getElementById("nearby-places-item")
 		//nearbyItem.className = "collapse('show')";
 	};
-
-	this.setCurrentPlace = function(location){
-		self.currentPlace(self.model.defaultLocations[location.index()]);
-	}
-
 
 	this.setCurrentWeather = function(weather){
 		weather.readableCondition = self.weatherCodes()[weather.weather[0].id].label;

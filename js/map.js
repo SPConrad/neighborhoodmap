@@ -110,6 +110,11 @@ function Map()
 			self.map.setCenter(center);
 		});
 
+		google.maps.event.addListener(self.map, 'click', function(){
+			console.log('null!');
+			viewModel.setCurrentPlace('null');
+		})
+
 	}
 
 	///when searching by a specific type
