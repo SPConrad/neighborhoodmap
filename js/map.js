@@ -75,6 +75,17 @@ function Map()
 			    new google.maps.Point(10, 32),
 			    ///scaled size
 			    new google.maps.Size(20, 32));
+
+		self.selectedMarker = new google.maps.MarkerImage(
+				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|ff0f0f|40|_|%E2%80%A2',
+			    // This marker is 20 pixels wide by 32 pixels high.
+			    new google.maps.Size(20, 32),
+			    // The origin for this image is (0, 0).
+			    new google.maps.Point(0, 0),
+			    // The anchor for this image is the base of the flagpole at (0, 32).
+			    new google.maps.Point(10, 32),
+			    ///scaled size
+			    new google.maps.Size(20, 32));
 		
 
 		//self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
@@ -90,6 +101,13 @@ function Map()
 		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
 			self.locateAndCreateMarkers(place, self.largeMarker);
+		});
+
+
+		google.maps.event.addDomListener(window, "resize", function(){
+			var center = self.map.getCenter();
+			google.maps.event.trigger(self.map, "resize");;
+			self.map.setCenter(center);
 		});
 
 	}
