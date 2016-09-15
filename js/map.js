@@ -284,8 +284,9 @@ function Map()
 
 
 	this.toggleNearbyCollapse = function(state){
-		if(self.currentNearbyPlace != "");
-		self.currentNearbyPlace.collapse(state);
+		if(self.currentNearbyPlace != ""){
+			self.currentNearbyPlace.collapse(state);
+		}
 	}
 
 	this.showInfo = function(marker, name){
