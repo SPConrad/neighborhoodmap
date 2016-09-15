@@ -285,6 +285,7 @@ function Map()
 
 	this.toggleNearbyCollapse = function(state){
 		if(self.currentNearbyPlace != ""){
+			console.log(self.currentNearbyPlace);
 			self.currentNearbyPlace.collapse(state);
 		}
 	}
