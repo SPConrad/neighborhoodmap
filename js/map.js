@@ -111,7 +111,6 @@ function Map()
 		});
 
 		google.maps.event.addListener(self.map, 'click', function(){
-			console.log('null!');
 			viewModel.setCurrentPlace('null');
 		})
 

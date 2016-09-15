@@ -331,17 +331,20 @@ var ViewModel = function() {
 		return self.filterString().length;
 	});
 
-	this.currentPlace = ko.observable("");
+	this.currentPlace = ko.observable(-1);
 
 	this.getCurrentPlace = ko.computed(function(){
-		if (self.currentPlace == ""){
+		console.log('currentplace == "" = ' + (self.currentPlace() === -1));
+		if (self.currentPlace() == -1){
 			return -1;
 		} else {
-			return self.currentPlace();
+			console.log(self.currentPlace());
+			return self.currentPlace().index();
 		}
 	});
 
 	this.setCurrentPlace = function(location){
+		console.log("location === null = " + (location === 'null'));
 		if (location === 'null'){
 			self.currentPlace(-1);
 		} else {
@@ -368,7 +371,6 @@ var ViewModel = function() {
 		}
 	}
 
-
 	this.createPlace = function(locations) {
 		var index = 0;
 		console.log("createPlace");
@@ -377,8 +379,6 @@ var ViewModel = function() {
 			self.model.defaultLocations.push(new Place(place)); 
 		});
 	};
-
-
 
 	this.nearbyPlacesVisible = ko.computed(function(){
     	return self.model.nearbyVisible();
