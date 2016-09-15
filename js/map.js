@@ -115,7 +115,6 @@ function Map()
 		});
 
 		google.maps.event.addListener(self.map, 'click', function(){
-			//viewModel.setCurrentPlace('null');
 			self.toggleNearbyCollapse("hide");
 			self.infoWindow.close();
 		})
@@ -202,6 +201,7 @@ function Map()
 					///show the name of the location
 					self.showInfo(this, results.name);	
 					if (self.currentNearbyPlace != ""){
+						console.log(self.currentNearbyPlace());
 						self.toggleNearbyCollapse("hide");
 					}	
 					self.currentNearbyPlace = $("#nearby-places-" + results.index);
@@ -284,6 +284,7 @@ function Map()
 
 
 	this.toggleNearbyCollapse = function(state){
+		if(self.currentNearbyPlace != "");
 		self.currentNearbyPlace.collapse(state);
 	}
 
