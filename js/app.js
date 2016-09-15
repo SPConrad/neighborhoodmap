@@ -346,9 +346,11 @@ var ViewModel = function() {
 
 	this.setCurrentPlace = function(location){
 		if (location === 'null'){
+			document.getElementById('search-text').className="";
 			self.changeCSS("show");
 			self.currentPlace(-1);
 		} else {
+			document.getElementById('search-text').className="hide-when-small";
 			self.changeCSS("hide-when-small");			
 			self.model.defaultLocations[location.index()].cssClass("show current-place");
 			self.currentPlace(self.model.defaultLocations[location.index()]);

@@ -22,7 +22,7 @@
 							<!-- ko if: index() == $parent.getCurrentPlace() -->
 							<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
 								<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
-									<li id="nearby-places-item">
+									<li id="nearby-places-item" class="nearby-place">
 										<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
 										<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
 											<ul>
@@ -46,7 +46,7 @@
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
 					<span class="hide-when-small" data-bind="text: 'The temperature in ' + name + ' is '"></span>
-					<span data-bind="text: tempInFar + '&deg\F.'"></span>
+					<span class="temp" data-bind="text: tempInFar + '&deg\F'"></span>
 					<span class="hide-when-small">Current conditions are </span>
 					<span class="hide-when-small" data-bind="text: readableCondition"></span>
 					<span class="hide-when-small" data-bind="text: ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></span>

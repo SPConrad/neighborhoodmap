@@ -3,8 +3,9 @@
 		
 	}
 
-	.master-list-container {
-		height: 25%;
+	.master-list-container {		
+		min-height: 25%;
+		height: auto;
 		width: 100%;
 		display: flex;
 	}
@@ -15,7 +16,7 @@
 	}
 
 	.favorites-list {
-		width: 80%;
+		width: 100%;
 		display: flex;
 	}
 
@@ -23,8 +24,19 @@
 		height: 100%;
 	}
 	
+
+	.master-list-container {		
+		min-height: 25%;
+		max-height: 50%;
+		height: auto;
+		width: 100%;
+		display: flex;
+	}
+
 	.map {
-		height: 75%;
+		min-height: 50%;
+		max-height: 75%;
+		height: auto;
 		width: 100%;
 	}
 
@@ -37,11 +49,22 @@
 		flex-wrap: wrap;
 	}
 
+	.nearby-place {
+		text-align: center;
+		width: 50%;
+	}
+
 	.weather-container{
 		position: absolute;
 		right: 0;
 		width: 20%;
 		top: 0;
+	}
+
+	.temp {
+		text-align: center;
+		font-size: 4em;
+
 	}
 
 	.show {
