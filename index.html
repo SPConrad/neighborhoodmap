@@ -18,8 +18,7 @@
 					<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
 					<span data-bind="text: getCurrentPlace().index"></span>
 					<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-						<!-- ko if: index() != $parent.getCurrentPlace() || $parent.getCurrentPlace() != -1 -->
-						<li data-bind="if: $parent.showDefault(index)"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}, attr: { 'class': 'favorite-place'}"></a>
+						<li data-bind="if: $parent.showDefault(index), attr: { 'class': cssClass}"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
 							<!-- ko if: index() == $parent.getCurrentPlace() -->
 							<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
 								<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
@@ -36,10 +35,6 @@
 								</ul>
 							</div>
 							<!-- /ko -->
-						<!-- /ko -->
-						<!-- ko if: index() != $parent.getCurrentPlace() &&  $parent.getCurrentPlace() != -1 -->
-						<div class="hide-when-small"></div>
-						<!-- /ko -->
 						</li>
 					</ul>
 				</div>

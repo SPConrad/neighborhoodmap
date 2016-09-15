@@ -1,4 +1,3 @@
-///to be replaced by proper Google Maps Places objects
 var favoritePlaces = [
 	{
 		name: 'Pike Place Market',
@@ -298,6 +297,10 @@ var Place = function(data) {
 		return self.address().replace(/ /g, "+")
 	});
 
+
+	this.cssClass = ko.observable("show");
+
+
 	this.nearbyPlacesHTML = ko.observable('<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#nearby-places">Button</button><div class="collapse" id="nearby-places"><li data-bind="text: rating"></li><li data-bind="text: priceLevel"></li><li data-bind="text: type"></li></div>')
 
 }
@@ -334,24 +337,29 @@ var ViewModel = function() {
 	this.currentPlace = ko.observable(-1);
 
 	this.getCurrentPlace = ko.computed(function(){
-		console.log('currentplace == "" = ' + (self.currentPlace() === -1));
 		if (self.currentPlace() == -1){
 			return -1;
 		} else {
-			console.log(self.currentPlace());
 			return self.currentPlace().index();
 		}
 	});
 
 	this.setCurrentPlace = function(location){
-		console.log("location === null = " + (location === 'null'));
 		if (location === 'null'){
+			self.changeCSS("show");
 			self.currentPlace(-1);
 		} else {
+			self.changeCSS("hide-when-small");			
+			self.model.defaultLocations[location.index()].cssClass("show current-place");
 			self.currentPlace(self.model.defaultLocations[location.index()]);
 		}
 	}
 
+	this.changeCSS = function(newCSS){
+		self.model.defaultLocations.forEach(function(location){
+			location.cssClass(newCSS);
+		})
+	}
 
 	this.hasCurrentPlace = true; 
 
@@ -373,7 +381,6 @@ var ViewModel = function() {
 
 	this.createPlace = function(locations) {
 		var index = 0;
-		console.log("createPlace");
 		locations.forEach(function(place){
 			place.index = index++;
 			self.model.defaultLocations.push(new Place(place)); 
@@ -385,7 +392,6 @@ var ViewModel = function() {
     })
 
     this.clearPlaces = function(){
-    	console.log("clear places");
 
     	if (self.nearbyPlacesList().length > 0){
     		self.nearbyPlacesList.removeAll();

@@ -20,6 +20,8 @@ function Map()
 
 	self.searchBox;
 
+	this.currentNearbyPlace; 
+
 	this.nearbyPlaces;
 
 	this.smallMarker;
@@ -52,6 +54,8 @@ function Map()
 			content: '',
 			maxWidth: 200
 		});
+
+		self.currentNearbyPlace = "";
 
 		///set up small and large markers
 		self.smallMarker = new google.maps.MarkerImage(
@@ -111,7 +115,9 @@ function Map()
 		});
 
 		google.maps.event.addListener(self.map, 'click', function(){
-			viewModel.setCurrentPlace('null');
+			//viewModel.setCurrentPlace('null');
+			self.toggleNearbyCollapse("hide");
+			self.infoWindow.close();
 		})
 
 	}
@@ -195,8 +201,13 @@ function Map()
 				google.maps.event.addListener(marker, 'click', function(){
 					///show the name of the location
 					self.showInfo(this, results.name);	
+					if (self.currentNearbyPlace != ""){
+						self.toggleNearbyCollapse("hide");
+					}	
+					self.currentNearbyPlace = $("#nearby-places-" + results.index);
 					///toggle the detail dropdown in the locations list 
-					$("#nearby-places-" + results.index).collapse();			
+					//$("#nearby-places-" + results.index)
+					self.toggleNearbyCollapse("show");
 				});
 				///add to the 
 				self.nearbyMarkers.push(marker);
@@ -272,6 +283,9 @@ function Map()
 	}
 
 
+	this.toggleNearbyCollapse = function(state){
+		self.currentNearbyPlace.collapse(state);
+	}
 
 	this.showInfo = function(marker, name){
 		self.infoWindow.marker = marker;

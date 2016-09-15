@@ -28,6 +28,15 @@
 		width: 100%;
 	}
 
+	.current-place {
+		width: 100%;
+	}
+
+	.current-place > div > ul {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
 	.weather-container{
 		position: absolute;
 		right: 0;
@@ -35,8 +44,17 @@
 		top: 0;
 	}
 
+	.show {
+
+	}
+
+	.show > a {
+		padding: 0px 5px 0px 5px;
+	}
+
 	.hide-when-small {
 		visibility: hidden;
+		display: none;
 	}
 }
 

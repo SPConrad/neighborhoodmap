@@ -9,6 +9,10 @@ body {
 	display: flex;
 }
 
+.default-list {
+	width: 100%
+}
+
 .btn {
 	white-space: normal;
 }
