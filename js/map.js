@@ -22,6 +22,8 @@ function Map()
 
 	this.currentNearbyPlace; 
 
+	this.oldNearbyPlace; 
+
 	this.nearbyPlaces;
 
 	this.smallMarker;
@@ -57,39 +59,9 @@ function Map()
 
 		self.currentNearbyPlace = "";
 
-		///set up small and large markers
-		self.smallMarker = new google.maps.MarkerImage(
-				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
-			    // This marker is 20 pixels wide by 32 pixels high.
-			    new google.maps.Size(20, 32),
-			    // The origin for this image is (0, 0).
-			    new google.maps.Point(0, 0),
-			    // The anchor for this image is the base of the flagpole at (0, 32).
-			    new google.maps.Point(0, 32),
-			    ///scaled size
-			    new google.maps.Size(10, 16));
+		self.oldNearbyPlace;
 
-		self.largeMarker = new google.maps.MarkerImage(
-				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|0091ff|40|_|%E2%80%A2',
-			    // This marker is 20 pixels wide by 32 pixels high.
-			    new google.maps.Size(20, 32),
-			    // The origin for this image is (0, 0).
-			    new google.maps.Point(0, 0),
-			    // The anchor for this image is the base of the flagpole at (0, 32).
-			    new google.maps.Point(10, 32),
-			    ///scaled size
-			    new google.maps.Size(20, 32));
-
-		self.selectedMarker = new google.maps.MarkerImage(
-				'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|ff0f0f|40|_|%E2%80%A2',
-			    // This marker is 20 pixels wide by 32 pixels high.
-			    new google.maps.Size(20, 32),
-			    // The origin for this image is (0, 0).
-			    new google.maps.Point(0, 0),
-			    // The anchor for this image is the base of the flagpole at (0, 32).
-			    new google.maps.Point(10, 32),
-			    ///scaled size
-			    new google.maps.Size(20, 32));
+		self.currentBigMarker = "";
 		
 
 		//self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
@@ -104,7 +76,7 @@ function Map()
 
 		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
-			self.locateAndCreateMarkers(place, self.largeMarker);
+			self.locateAndCreateMarkers(place, "large");
 		});
 
 
@@ -118,6 +90,34 @@ function Map()
 			self.toggleNearbyCollapse("hide");
 			self.infoWindow.close();
 		})
+
+	}
+
+	this.NearbyPlaceObject = function(index){
+		this.button = $('#nearby-places-' + index);
+		this.marker = self.nearbyMarkers[index];
+
+		return this;
+	}
+
+	this.changeCurrentNearbyMarker = function(index){
+		console.log(self.oldNearbyPlace === self.currentNearbyPlace);
+		if (self.oldNearbyPlace != self.currentNearbyPlace){
+			self.oldNearbyPlace = self.currentNearbyPlace;
+
+			if (self.oldNearbyPlace != "") {
+				self.oldNearbyPlace.button.collapse("hide");
+				self.oldNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+			}
+
+			self.currentNearbyPlace = self.NearbyPlaceObject(index);
+
+			self.currentNearbyPlace.button.collapse("show");
+			self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+
+			console.log(self.currentNearbyPlace.button);
+			console.log(self.oldNearbyPlace.button);
+		}
 
 	}
 
@@ -168,46 +168,62 @@ function Map()
 			
 			///add name after determining what part of address to get
 			var marker = new google.maps.Marker({
-				icon: size,
 				map: self.map,
 				animation: google.maps.Animation.DROP,
 				position: {lat: lat, lng: lng}
 			})
 			self.bounds.extend(marker.position);
 
+
 			
 			///if it's a large marker, it is a default location. 
-			if (size.scaledSize.height === 32){
+			if (size === "large"){
+				marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
 				///starting radius is 500 meters
 				var placesRadius = 500;
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
-					///popup the name of the location
-					self.showInfo(this, locationInfo.name());
-					///clear old nearby places if they exist	
-					viewModel.clearPlaces();	
-					///do a standard search of nearby restaurants 			 
-					self.searchPlacesByArea(locationInfo, placesRadius);
-					///set the clicked marker as the current location
-					viewModel.setCurrentPlace(locationInfo);	
-					///re-set the bounds so the new locations are 
-				});				
-				///add to default locations array
+					if (self.currentBigMarker !== this) {
+						marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+						if(self.currentBigMarker !=  ""){
+							self.currentBigMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+						}
+						///popup the name of the location
+						self.showInfo(this, locationInfo.name());
+						self.currentBigMarker = this;
+						///clear old nearby places if they exist	
+						viewModel.clearPlaces();	
+						///do a standard search of nearby restaurants 			 
+						self.searchPlacesByArea(locationInfo, placesRadius);
+						///set the clicked marker as the current location
+						viewModel.setCurrentPlace(locationInfo);	
+						///re-set the bounds so the new locations are 
+					}
+				});		
+						
+					///add to default locations array
 				self.defaultMarkers.push(marker);
-			} else if (size.scaledSize.height === 16){
+			} else if (size === "small"){
+				marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
 				///if it's a small marker, it's a nearby place.
 				///add a listener to the marker
-				google.maps.event.addListener(marker, 'click', function(){
+				google.maps.event.addListener(marker, 'click', function(){				
 					///show the name of the location
 					self.showInfo(this, results.name);	
-					if (self.currentNearbyPlace != ""){
-						console.log(self.currentNearbyPlace());
+					self.changeCurrentNearbyMarker(results.index);
+					/*if (self.currentNearbyPlace != ""){
+						self.currentNearbyMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
 						self.toggleNearbyCollapse("hide");
 					}	
 					self.currentNearbyPlace = $("#nearby-places-" + results.index);
+					self.currentNearbyMarker = this;
+
 					///toggle the detail dropdown in the locations list 
-					//$("#nearby-places-" + results.index)
-					self.toggleNearbyCollapse("show");
+					self.toggleNearbyCollapse("show");*/
+					
+
+					///v2
+					///viewModel.scaleDownNot(results.index);
 				});
 				///add to the 
 				self.nearbyMarkers.push(marker);
@@ -262,10 +278,23 @@ function Map()
 					for (var i = 0; i < resultsSize; i++){
 						results[i].index = i;	
 						self.nearbyPlaces.push(results[i]);				
-						self.createMarker(results[i], size, self.smallMarker);
+						self.createMarker(results[i], size, "small");
 					}
 					self.setBounds();
 					viewModel.changeNearbyPlaces(self.nearbyPlaces);
+					self.nearbyPlaces.forEach(function(place){
+						$('#nearby-places-' + place.index).on('shown.bs.collapse', function(){
+							self.changeCurrentNearbyMarker(place.index);
+							console.log("shown");
+
+							/*self.nearbyPlaces.forEach(function(otherPlace){
+								if (otherPlace.index != place.index){
+									console.log("collapse")
+									$('#nearby-places-' + otherPlace.index).collapse("hide");
+								};
+							});*/
+						});
+					});
 				}	
 			} else
 			{
@@ -282,13 +311,13 @@ function Map()
 		///populate the sidebar for that item
 	}
 
+	
+
 
 	this.toggleNearbyCollapse = function(state){
-		console.log(self.currentNearbyPlace != "");
-		console.log(self.currentNearbyPlace);
 		if(self.currentNearbyPlace != ""){
-			console.log(self.currentNearbyPlace);
 			self.currentNearbyPlace.collapse(state);
+
 		}
 	}
 
