@@ -1,3 +1,5 @@
+///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
+
 function Map()
 {	
 
@@ -74,7 +76,7 @@ function Map()
 			self.infoWindow.close();
 			viewModel.setCurrentPlace('null');
 			self.clearNearbyPlaces();
-			self.currentBigMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+			self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
 			self.map.fitBounds(self.bounds);
 		})
 
@@ -104,7 +106,7 @@ function Map()
 			///collapse the button info
 			place.button.collapse("hide");
 			///reset the marker color
-			place.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');	
+			place.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');	
 		}
 	}
 
@@ -120,7 +122,7 @@ function Map()
 		///expand the button with the place's info
 		self.currentNearbyPlace.button.collapse("show");
 		///change the marker color
-		self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+		self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/orange-dot.png');
 	}
 
 
@@ -182,15 +184,15 @@ function Map()
 			
 			///if it's a large marker, it is a default location. 
 			if (size === "large"){
-				marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
 				///starting radius is 500 meters
 				var placesRadius = 500;
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
-						marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+						marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png')
 						if(self.currentBigMarker !=  ""){
-							self.currentBigMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
 						}
 						///popup the name of the location
 						self.showInfo(this, locationInfo.name());
@@ -206,7 +208,7 @@ function Map()
 					///add to default locations array
 				self.defaultMarkers.push(marker);
 			} else if (size === "small"){
-				marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
+				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png')
 				///if it's a small marker, it's a nearby place.
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){				
@@ -297,12 +299,12 @@ function Map()
 								///expanded by itself
 								///change marker color
 								self.currentNearbyPlace = new self.NearbyPlaceObject(place.index);
-								self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 															///ensure there is an old place to modify
 								if (self.oldNearbyPlace != ""){
 									///close old button, change old marker color
 									self.oldNearbyPlace.button.collapse("hide");
-									self.oldNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 									
 								}
 									//assign old button to be the new button
@@ -313,12 +315,12 @@ function Map()
 								///expanded by itself
 								///change marker color
 								self.currentNearbyPlace = self.NearbyPlaceObject(place.index);
-								self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 								///ensure there is an old place to modify
 								if (self.oldNearbyPlace != ""){
 									///close old button, change old marker color
 									self.oldNearbyPlace.button.collapse("hide");
-									self.oldNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 									}
 									//assign old button to be the new button
 									self.oldNearbyPlace = self.currentNearbyPlace;

@@ -1,3 +1,7 @@
+///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
+
+
+
 ///hardcoded favorite/default places
 var favoritePlaces = [
 	{
