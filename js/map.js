@@ -115,7 +115,7 @@ function Map()
 	this.activateCurrentMarker = function(index, data){
 		//console.log("-----assign currentNearbyPlace----- " + index);
 		//console.log("came from: " + data);
-		self.currentNearbyPlace = self.NearbyPlaceObject(index);
+		self.currentNearbyPlace = new self.NearbyPlaceObject(index);
 
 		//console.log("show button on index -------------- " + index);
 		self.currentNearbyPlace.button.collapse("show");
@@ -216,9 +216,9 @@ function Map()
 					///show the name of the location
 					self.showInfo(this, results.name);	
 					///expand and change color of the current marker
-					//self.activateCurrentMarker(results.index, "marker click");
+					self.activateCurrentMarker(results.index, "marker click");
 					///collapse and change color of the old marker
-					//self.changeOldMarker(results.index, "marker click");
+					self.changeOldMarker(results.index, "marker click");
 				});
 				///add to the 
 				self.nearbyMarkers.push(marker);
