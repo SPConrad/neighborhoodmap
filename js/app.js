@@ -368,7 +368,7 @@ var ViewModel = function() {
     })
 
 	this.setCurrentPlace = function(location){
-		///assign the currentPlace 
+		///assign the currentPlace
 		if (location === 'null'){
 			///if there is no location in the variable, reset the css on the filter text box 
 			///so it will be shown on small windows
