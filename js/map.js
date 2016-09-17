@@ -8,17 +8,9 @@ function Map()
 
 	this.map;
 
-	this.defaultIcon;
-
-	this.highlightedIcon;
-
 	this.infoWindow;
 
-	this.mapsApiKey;
-
 	this.startingLocation = {lat: 47.609646, lng: -122.342117};
-
-	self.searchBox;
 
 	this.currentNearbyPlace; 
 
@@ -57,34 +49,26 @@ function Map()
 			maxWidth: 200
 		});
 
+		///initialize some variables
 		self.currentNearbyPlace = "";
 
 		self.oldNearbyPlace = "";
 
 		self.currentBigMarker = "";		
 
-		//self.searchBox = new google.maps.places.SearchBox(document.getElementById("search-text"));
-		
-		//self.searchBox.setBounds(self.bounds);
-
-
-		//document.getElementById('search-button').addEventListener('click', function(){
-			//executeSearch();
-		//})
-
-
 		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
 			self.locateAndCreateMarkers(place, "large");
 		});
 
-
+		///resize the map when the browser is resized 
 		google.maps.event.addDomListener(window, "resize", function(){
 			var center = self.map.getCenter();
 			google.maps.event.trigger(self.map, "resize");;
 			self.map.setCenter(center);
 		});
 
+		///listen for a non-marker click to close the current marker info and close the info window
 		google.maps.event.addListener(self.map, 'click', function(){
 			self.toggleNearbyCollapse("hide");
 			self.infoWindow.close();
@@ -99,28 +83,24 @@ function Map()
 	}
 
 	this.changeOldMarker = function(index, data){
-		//console.log("======== change old marker =======")
-		//console.log("came from " + data);
+		///check to see if there is an old nearbyplace
 		if (self.oldNearbyPlace != "") {
-			//console.log("hide old button " + self.oldNearbyPlace.index);
+			///collapse the button info
 			self.oldNearbyPlace.button.collapse("hide");
-			//console.log("change old marker " + self.oldNearbyPlace.index);
+			///reset the marker color
 			self.oldNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');	
 		}
-
-		//console.log("change old from " + self.oldNearbyPlace.index + " to " + self.currentNearbyPlace + ", passed in index is " + index);
+		///assign the old nearbyplace to be the current one so it may be changed when the next one is selected
 		self.oldNearbyPlace = self.currentNearbyPlace;
 		
 	}
 	this.activateCurrentMarker = function(index, data){
-		//console.log("-----assign currentNearbyPlace----- " + index);
-		//console.log("came from: " + data);
+		///create the new currentNearbyPlace variable
 		self.currentNearbyPlace = new self.NearbyPlaceObject(index);
-
-		//console.log("show button on index -------------- " + index);
+		///expand the button with the place's info
 		self.currentNearbyPlace.button.collapse("show");
-		//console.log("change marker color --------------- " + index);
-		self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+		///change the marker color
+		self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
 	}
 
 
@@ -140,7 +120,6 @@ function Map()
 	this.mapsError = function(){
 		var mapDiv = docuement.getElementById('map');
 		alert("Error!");
-		///innerhtml to an error message
 	}
 
 	///take in an array of locations, create markers
@@ -227,34 +206,39 @@ function Map()
 			//self.map.fitBounds(self.bounds);
 		}; 
 
-		this.getNearbyMarkers = function(){
-			return self.nearbyMarkers;
-		}
+	this.getNearbyMarkers = function(){
+		return self.nearbyMarkers;
+	}
 
 
 	this.setBounds = function(){
+		///get the current nearbymarkers 
 		var markers = self.getNearbyMarkers();
+		///create a new bounds object
 		self.newBounds = new google.maps.LatLngBounds();
+		///use the nearbymarkers to assign the bounds
 		markers.forEach(function(marker){
 			self.newBounds.extend(marker.position);
 		});
+		///and apply them to the map
 		self.map.fitBounds(self.newBounds);
 	}
 
 	///do a places search for nearby establishments
 	this.getPlaces = function(location, radius, placesType, size) {
 		///make request for places
-
+		///grab the placeType from the dropdown on the page
 		if (placesType === "" || placesType === undefined) {
 			placesType = viewModel.placeType().key;
 		}
-
+		///create request variable 
 		request = {
 			location: { lat: location.lat(), lng: location.lng() },
 			radius: radius,
 			type: [placesType]
 		}
 
+		///hide the old markers
 		if (self.nearbyMarkers.length > 0){
 			self.nearbyMarkers.forEach(function(data){
 				data.setMap(null);
@@ -265,36 +249,38 @@ function Map()
 
 		self.service.nearbySearch(request, function(results, status){
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
+				////if there are fewer than 10 results and the radius is under 3KM, increase radius and try again
 				if (results.length < 10 && radius < 3000)
 				{
 					self.getPlaces(location, (radius += 500), placesType)
 				} else {
+					/// if there are fewer than 10, use the results length size, otherwise use the first 10
 					var resultsSize = (results.length > 10) ? 10 : results.length;
 					for (var i = 0; i < resultsSize; i++){
 						results[i].index = i;	
 						self.nearbyPlaces.push(results[i]);				
 						self.createMarker(results[i], size, "small");
 					}
+					///reset the bounds for the new markers
 					self.setBounds();
+					///assign the new nearby places to the viewmodel
 					viewModel.changeNearbyPlaces(self.nearbyPlaces);
+					///set up listeners for when the user clicks on a nearby place button instead of a marker
 					self.nearbyPlaces.forEach(function(place){
 						$('#nearby-places-' + place.index).on('shown.bs.collapse', function(){
-							//self.changeCurrentNearbyMarker(results.index);
+							//these if statements are necessary so this is only called when the user clicks on the button and not when user clicks on the marker
 							///if the index is equal, either seeing a marker-opened event or have clicked on the same marker twice
 							///how to differentiate
 							if (self.currentNearbyPlace.index == place.index){
 								console.log("index equal")
 							} else 	if (self.currentNearbyPlace.index != place.index){
 								///this will be hit if user clicked on a new button
-								console.log("index not equal")
-
 								///expanded by itself
 								///change marker color
 								self.currentNearbyPlace = new self.NearbyPlaceObject(place.index);
 								console.log("current nearby place index " + self.currentNearbyPlace.index)
 								self.currentNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-							
-								///ensure there is an old place to modify
+															///ensure there is an old place to modify
 								if (self.oldNearbyPlace != ""){
 									console.log("old nearby place exists and index is " + self.oldNearbyPlace.index);
 									///close old button, change old marker color
@@ -318,26 +304,13 @@ function Map()
 									///close old button, change old marker color
 									self.oldNearbyPlace.button.collapse("hide");
 									self.oldNearbyPlace.marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-									
-									//assign old button to be the new button
-								}
+									}
 									//assign old button to be the new button
 									self.oldNearbyPlace = self.currentNearbyPlace;
 									console.log("old nearby place index is now " + self.oldNearbyPlace.index);
 							}
 							});
 					});
-							
-							
-
-							//self.openedByMarkerClick = false;
-
-							/*self.nearbyPlaces.forEach(function(otherPlace){
-								if (otherPlace.index != place.index){
-									//console.log("collapse")
-									$('#nearby-places-' + otherPlace.index).collapse("hide");
-								};
-							});*/
 				}	
 			} else
 			{
@@ -350,8 +323,6 @@ function Map()
 		weather.currentLatLngWeather(location);
 
 		//weather.forecastCity(location);
-
-		///populate the sidebar for that item
 	}
 
 	
@@ -359,17 +330,18 @@ function Map()
 
 	this.toggleNearbyCollapse = function(state){
 		if(self.currentNearbyPlace != ""){
-			//console.log("XXXXXXXXXXXXXXXXXX collapse nearby XXXXXXXXXXXXXXXXXXXXXX");
 			self.currentNearbyPlace.collapse(state);
 		}
 	}
 
 	this.showInfo = function(marker, name){
+		///assign which marker to open the info window above
 		self.infoWindow.marker = marker;
+		///assign the content
 		self.infoWindow.setContent(name);
 		self.infoWindow.maxWidth = 500;
+		///open it
 		self.infoWindow.open(self.map, marker);
-
 	}
 
 }

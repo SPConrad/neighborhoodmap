@@ -1,3 +1,4 @@
+///hardcoded favorite/default places
 var favoritePlaces = [
 	{
 		name: 'Pike Place Market',
@@ -57,6 +58,7 @@ var favoritePlaces = [
 	}
 ]
 
+///readable place types for google maps places
 var placesTypes = [
 	{
 	    'key': 'restaurant', 
@@ -157,19 +159,19 @@ var placesTypes = [
 ]
 
 var loadFile= function(callback) {   
-
+	///get JSON file with readable weather codes
     var xobj = new XMLHttpRequest();
         xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'js/weatherCodes.json', true); // Replace 'my_data' with the path to your file
+    xobj.open('GET', 'js/weatherCodes.json', true); 
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == "200") {
-            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
             callback(xobj.responseText);
           }
     };
     xobj.send(null);  
  }
 
+///this was fun
 var getWindDirection = function(bearing){
 	var windBearing = bearing;
 	switch (true) {
@@ -229,6 +231,7 @@ var getWindDirection = function(bearing){
 }
 
 
+///create an array of Place types with passed in array of non-Place types
 var initLocations = function(array){
 	var bufferArray = ko.observableArray([]);
 
@@ -244,6 +247,7 @@ var initLocations = function(array){
 
 var Model = function () {
 
+	///set up the Model
 	var self = this;
 
     this.defaultLocations = initLocations(favoritePlaces);
@@ -262,9 +266,12 @@ var Model = function () {
 
 };
 
+///a Place variable
 var Place = function(data) {
 	var self = this; 
+	///they'll all be in WA for this demo
 	var state = 'WA'
+	///if there is a data.geometry, get the lat and lng from there. otherwise use what is passed in
 	var lat = data.geometry ? data.geometry.location.lat() : data.lat;
 	var lng = data.geometry ? data.geometry.location.lng() : data.lng;
 
@@ -277,7 +284,7 @@ var Place = function(data) {
 	this.state = ko.observable(state);
 
 	this.priceLevel = ko.observable(data.price_level);
-
+	///make a readable price variable 
 	this.priceText = ko.computed(function(){
 		var text = "$";	
 		if(typeof(self.priceLevel()) === 'number'){
@@ -289,19 +296,17 @@ var Place = function(data) {
 	this.ratings = ko.observable(data.rating); 
 	this.types = ko.observableArray(data.types);
 	this.type = ko.observable(data.types ? data.types[0] : "none");
-
+	///make an easily used address object
 	this.address = ko.computed(function() { 
 		return self.street() + ", " + self. city() + ", " + self.state() 
 	});
+	///make an address object for use in requests 
 	this.requestAddress = ko.computed(function() {
 		return self.address().replace(/ /g, "+")
 	});
 
-
+	///css trickery for smaller browsers
 	this.cssClass = ko.observable("show");
-
-
-	this.nearbyPlacesHTML = ko.observable('<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#nearby-places">Button</button><div class="collapse" id="nearby-places"><li data-bind="text: rating"></li><li data-bind="text: priceLevel"></li><li data-bind="text: type"></li></div>')
 
 }
 
@@ -314,27 +319,41 @@ var ViewModel = function() {
 
 	this.model = new Model(); 
 
+	///intialize nearbyPlacesList array
 	this.nearbyPlacesList = ko.observableArray([]);
 
+	this.currentPlace = ko.observable(-1);
+
+	this.filterString = ko.observable("");
+
+	this.selectedPlaceType = ko.observable("");
+
+	this.currentWeather = ko.computed(function() {
+		return self.model.currentWeather();
+	})
+
+	this.weatherCodes = ko.computed(function() {
+		return self.model.weatherCodes(); 
+	})
+
+	this.placesTypes = ko.computed(function() {
+		return self.model.placesTypes();
+	})
 
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
 	}, this);
 
 
-	this.selectedPlaceType = ko.observable("");
-
 	this.placeType = ko.computed(function() {
 		return self.selectedPlaceType();
 	})
 
-	this.filterString = ko.observable("");
 	//this.searchString = ko.observable("");
 	this.filterStringLength = ko.computed(function(){
 		return self.filterString().length;
 	});
 
-	this.currentPlace = ko.observable(-1);
 
 	this.getCurrentPlace = ko.computed(function(){
 		if (self.currentPlace() == -1){
@@ -344,14 +363,25 @@ var ViewModel = function() {
 		}
 	});
 
+	this.nearbyPlacesVisible = ko.computed(function(){
+    	return self.model.nearbyVisible();
+    })
+
 	this.setCurrentPlace = function(location){
+		///assign the currentPlace 
 		if (location === 'null'){
+			///if there is no location in the variable, reset the css on the filter text box 
+			///so it will be shown on small windows
 			document.getElementById('search-text').className="";
+			///show all of the other default places
 			self.changeCSS("show");
 			self.currentPlace(-1);
 		} else {
+			///if there is, hide the text box
 			document.getElementById('search-text').className="hide-when-small";
+			///hide the other default places
 			self.changeCSS("hide-when-small");			
+			///show the selected default place
 			self.model.defaultLocations[location.index()].cssClass("show current-place");
 			self.currentPlace(self.model.defaultLocations[location.index()]);
 		}
@@ -362,8 +392,6 @@ var ViewModel = function() {
 			location.cssClass(newCSS);
 		})
 	}
-
-	this.hasCurrentPlace = true; 
 
 	this.searchPlaces = function(){
 		gMap.searchPlacesByType(self.currentPlace(), self.placeType().key);
@@ -382,6 +410,7 @@ var ViewModel = function() {
 	}
 
 	this.createPlace = function(locations) {
+		///create places for each of the locations objects
 		var index = 0;
 		locations.forEach(function(place){
 			place.index = index++;
@@ -389,12 +418,8 @@ var ViewModel = function() {
 		});
 	};
 
-	this.nearbyPlacesVisible = ko.computed(function(){
-    	return self.model.nearbyVisible();
-    })
-
     this.clearPlaces = function(){
-
+    	///clear out the nearbyPlacesList array
     	if (self.nearbyPlacesList().length > 0){
     		self.nearbyPlacesList.removeAll();
 		}
@@ -405,45 +430,17 @@ var ViewModel = function() {
 
 		nearbyPlaces.forEach(function(place){
 			self.nearbyPlacesList.push(new Place(place));
-			//console.log($('#nearby-places-' + place.index));
-			/*$('#nearby-places-' + place.index).on('show.bs.collapse', function(){
-				nearbyPlaces.forEach(function(otherPlace){
-					if (otherPlace.index != place.index){
-						$('#nearby-places-' + otherPlace.index).collapse("hide");
-					}
-				})
-			})*/
 		});
 
-		
+		///tell view that nearbyPlaces should be shown
 		self.model.nearbyVisible(true);
-
-		var nearbyItem = document.getElementById("nearby-places-item")
-		//nearbyItem.className = "collapse('show')";
 	};
-
-	this.getButtonOfPlace = function(index){
-		//console.log($('#nearby-places-' + index));
-		return $('#nearby-places-' + index);
-	}
 
 	this.setCurrentWeather = function(weather){
 		weather.readableCondition = self.weatherCodes()[weather.weather[0].id].label;
 		weather.readableWindDirection = getWindDirection(weather.wind.deg);
 		self.model.currentWeather(weather);
 	}
-
-	this.currentWeather = ko.computed(function() {
-		return self.model.currentWeather();
-	})
-
-	this.weatherCodes = ko.computed(function() {
-		return self.model.weatherCodes(); 
-	})
-
-	this.placesTypes = ko.computed(function() {
-		return self.model.placesTypes();
-	})
 
 
 
