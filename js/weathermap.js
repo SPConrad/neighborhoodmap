@@ -1,11 +1,11 @@
 ///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
 
 
-var weatherApiUrlBase = "https://api.openweathermap.org/data/2.5/"
+var weatherApiUrlBase = "https://api.openweathermap.org/data/2.5/";
 
-var currentWeatherUrl = "weather?"
+var currentWeatherUrl = "weather?";
 
-var weatherApiKey = "&appid=8b0e79fa0a446292795b755997601af7"
+var weatherApiKey = "&appid=8b0e79fa0a446292795b755997601af7";
 
 var forecastURL = "forecast?q=";
 
@@ -17,13 +17,12 @@ var Weather = function() {
 	///function to get the forecast by city
 	self.forecastCity = function(location) {
 		return forecastByCity(location);
-	}
-
+	};
 	///function to get current weather by latLng
 	self.currentLatLngWeather = function(location) {
 		return currentWeatherByCoord(location); 
-	}
-}
+	};
+};
 
 function httpRequest(url, callback)
 {
@@ -67,7 +66,7 @@ function forecastByCity(location){
 				var date = new Date(0);
 				date.setUTCSeconds(forecast.dt);
 				//console.log(date);
-			})
+			});
 
 
 		}

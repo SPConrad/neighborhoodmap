@@ -43,7 +43,7 @@ function Map()
 		self.service = new google.maps.places.PlacesService(self.map);
 
 		///Create bounds var
-		self.bounds = new google.maps.LatLngBounds;
+		self.bounds = new google.maps.LatLngBounds();
 
 		///Create infowindow obj 
 		self.infoWindow = new google.maps.InfoWindow({
@@ -66,7 +66,7 @@ function Map()
 		///resize the map when the browser is resized 
 		google.maps.event.addDomListener(window, "resize", function(){
 			var center = self.map.getCenter();
-			google.maps.event.trigger(self.map, "resize");;
+			google.maps.event.trigger(self.map, "resize");
 			self.map.setCenter(center);
 		});
 
@@ -76,46 +76,55 @@ function Map()
 			self.infoWindow.close();
 			viewModel.setCurrentPlace('null');
 			self.clearNearbyPlaces();
-			self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+			self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 			self.map.fitBounds(self.bounds);
-		})
+		});
 
+	};
+
+	this.changeDefault = function(index, showOrHide){
+		console.log(index);
+		if (showOrHide === "hide"){
+			self.defaultMarkers[index].setMap(null);
+		} else if (showOrHide === "show"){
+			self.defaultMarkers[index].setMap(self.map);
+		}
 	}
 
 	this.NearbyPlaceObject = function(index){
 		this.button = $('#nearby-places-' + index);
 		this.marker = self.nearbyMarkers[index];
 		this.index = index;
-	}
+	};
 
 	this.clearNearbyPlaces = function(){		
 		if (self.nearbyMarkers.length > 0){
 			self.nearbyMarkers.forEach(function(data){
 				data.setMap(null);
-			})
+			});
 		}
 		self.closeNearbyPlace(self.oldNearbyPlace);
 		self.closeNearbyPlace(self.currentNearbyPlace);
 		self.oldNearbyPlace = "";
 		self.currentNearbyPlace = "";
-	}
+	};
 
 	this.closeNearbyPlace = function(place){
 		///check to see if there is an old nearbyplace
-		if (place != "") {
+		if (place !== "") {
 			///collapse the button info
 			place.button.collapse("hide");
 			///reset the marker color
 			place.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');	
 		}
-	}
+	};
 
 	this.changeOldMarker = function(){
 		self.closeNearbyPlace(self.oldNearbyPlace);
 		///assign the old nearbyplace to be the current one so it may be changed when the next one is selected
-		self.oldNearbyPlace = self.currentNearbyPlace;
-		
-	}
+		self.oldNearbyPlace = self.currentNearbyPlace;		
+	};
+  
 	this.activateCurrentMarker = function(index){
 		///create the new currentNearbyPlace variable
 		self.currentNearbyPlace = new self.NearbyPlaceObject(index);
@@ -123,7 +132,7 @@ function Map()
 		self.currentNearbyPlace.button.collapse("show");
 		///change the marker color
 		self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/orange-dot.png');
-	}
+	};
 
 
 
@@ -131,18 +140,18 @@ function Map()
 	///when searching by a specific type
 	this.searchPlacesByType = function(currentPlace, placeType){
 		self.getPlaces(currentPlace, 2000, placeType);
-	}
+	};
 
 	///and when just searching by default type (restaurant)
 	this.searchPlacesByArea = function(location, radius){
 		self.getPlaces(location, radius, "", "");
-	}
+	};
 
 	///uh oh!
 	this.mapsError = function(){
 		var mapDiv = docuement.getElementById('map');
 		alert("Error!");
-	}
+	};
 
 	///take in an array of locations, create markers
 	this.locateAndCreateMarkers = function(location, size) {
@@ -162,8 +171,8 @@ function Map()
 			else {
 				alert("Geocode unsuccessful, error: " + status);
 			}
-		})
-	}
+		});
+	};
 
 	this.createMarker = function(results, locationInfo, size){
 			///prep the necessary variables
@@ -177,22 +186,22 @@ function Map()
 				map: self.map,
 				animation: google.maps.Animation.DROP,
 				position: {lat: lat, lng: lng}
-			})
+			});
 			self.bounds.extend(marker.position);
 
 
 			
 			///if it's a large marker, it is a default location. 
 			if (size === "large"){
-				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 				///starting radius is 500 meters
 				var placesRadius = 500;
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
-						marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png')
-						if(self.currentBigMarker !=  ""){
-							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+						marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+						if(self.currentBigMarker !==  ""){
+							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 						}
 						///popup the name of the location
 						self.showInfo(this, locationInfo.name());
@@ -208,7 +217,7 @@ function Map()
 					///add to default locations array
 				self.defaultMarkers.push(marker);
 			} else if (size === "small"){
-				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png')
+				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 				///if it's a small marker, it's a nearby place.
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){				
@@ -226,7 +235,7 @@ function Map()
 
 	this.getNearbyMarkers = function(){
 		return self.nearbyMarkers;
-	}
+	};
 
 
 	this.setBounds = function(){
@@ -242,7 +251,7 @@ function Map()
 
 		///and apply them to the map
 		self.map.fitBounds(newBounds);
-	}
+	};
 
 	///do a places search for nearby establishments
 	this.getPlaces = function(location, radius, placesType, size) {
@@ -256,13 +265,13 @@ function Map()
 			location: { lat: location.lat(), lng: location.lng() },
 			radius: radius,
 			type: [placesType]
-		}
+		};
 
 		///hide the old markers
 		if (self.nearbyMarkers.length > 0){
 			self.nearbyMarkers.forEach(function(data){
 				data.setMap(null);
-			})
+			});
 		}
 
 		self.nearbyPlaces = [];
@@ -273,7 +282,7 @@ function Map()
 				////if there are fewer than 10 results and the radius is under 3KM, increase radius and try again
 				if (results.length < 10 && radius < 3000)
 				{
-					self.getPlaces(location, (radius += 500), placesType)
+					self.getPlaces(location, (radius += 500), placesType);
 				} else {
 					/// if there are fewer than 10, use the results length size, otherwise use the first 10
 					var resultsSize = (results.length > 10) ? 10 : results.length;
@@ -301,7 +310,7 @@ function Map()
 								self.currentNearbyPlace = new self.NearbyPlaceObject(place.index);
 								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 															///ensure there is an old place to modify
-								if (self.oldNearbyPlace != ""){
+								if (self.oldNearbyPlace !== ""){
 									///close old button, change old marker color
 									self.oldNearbyPlace.button.collapse("hide");
 									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
@@ -309,15 +318,15 @@ function Map()
 								}
 									//assign old button to be the new button
 									///asign old nearbyplace 
-									self.oldNearbyPlace = self.currentNearbyPlace;
-							} else if (self.currentNearbyPlace.index == undefined){
+									self.oldNearbyPlace == self.currentNearbyPlace;
+							} else if (self.currentNearbyPlace.index === undefined){
 								///this will be hit if the first action is clicking a button
 								///expanded by itself
 								///change marker color
 								self.currentNearbyPlace = self.NearbyPlaceObject(place.index);
 								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 								///ensure there is an old place to modify
-								if (self.oldNearbyPlace != ""){
+								if (self.oldNearbyPlace !== ""){
 									///close old button, change old marker color
 									self.oldNearbyPlace.button.collapse("hide");
 									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
@@ -335,20 +344,20 @@ function Map()
 					self.getPlaces(location, (radius += 500), placesType);
 				}
 			}
-		})
+		});
 		weather.currentLatLngWeather(location);
 
 		//weather.forecastCity(location);
-	}
+	};
 
 	
 
 
 	this.toggleNearbyCollapse = function(state){
-		if(self.currentNearbyPlace != ""){
+		if(self.currentNearbyPlace !== ""){
 			self.currentNearbyPlace.button.collapse(state);
 		}
-	}
+	};
 
 	this.showInfo = function(marker, name){
 		///assign which marker to open the info window above
@@ -358,7 +367,7 @@ function Map()
 		self.infoWindow.maxWidth = 500;
 		///open it
 		self.infoWindow.open(self.map, marker);
-	}
+	};
 
 }
 
@@ -367,4 +376,4 @@ var gMap;
 var initMap = function() {
 	gMap = new Map();
 	gMap.initMap();
-}
+};
