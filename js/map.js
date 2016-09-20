@@ -80,6 +80,8 @@ function Map()
 			self.map.fitBounds(self.bounds);
 		});
 
+		viewModel.assignDefaultHyperlinks();
+
 	};
 
 	this.changeDefault = function(index, showOrHide){
@@ -199,7 +201,9 @@ function Map()
 				///add a listener to the marker
 				google.maps.event.addListener(marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
-						marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+						console.log(this);
+						self.setCurrentPlace(this, locationInfo);
+						/*marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 						if(self.currentBigMarker !==  ""){
 							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 						}
@@ -211,7 +215,7 @@ function Map()
 						///do a standard search of nearby restaurants 			 
 						self.searchPlacesByArea(locationInfo, placesRadius);
 						///set the clicked marker as the current location
-						viewModel.setCurrentPlace(locationInfo);	
+						viewModel.setCurrentPlace(locationInfo);*/	
 					}
 				});								
 					///add to default locations array
@@ -232,6 +236,25 @@ function Map()
 				self.nearbyMarkers.push(marker);
 			}
 		}; 
+
+	this.setCurrentPlace = function(thisMarker, locationInfo){
+		if (self.currentBigMarker !== thisMarker) {
+			thisMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+			if(self.currentBigMarker !==  ""){
+				self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+			}
+			///popup the name of the location
+			self.showInfo(thisMarker, locationInfo.name());
+			self.currentBigMarker = thisMarker;
+			///clear old nearby places if they exist	
+			viewModel.clearPlaces();	
+			///do a standard search of nearby restaurants 			 
+			self.searchPlacesByArea(locationInfo, 500);
+			///set the clicked marker as the current location
+			viewModel.setCurrentPlace(locationInfo);	
+		}
+
+	}
 
 	this.getNearbyMarkers = function(){
 		return self.nearbyMarkers;

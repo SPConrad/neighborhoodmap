@@ -313,6 +313,9 @@ var Place = function(data) {
 
 	this.hidden = ko.observable(false);
 
+	this.clickLink = "";
+
+
 };
 
 
@@ -347,8 +350,16 @@ var ViewModel = function() {
 
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
-	}, this);
+	});
 
+	this.assignDefaultHyperlinks = function(){
+			self.model.defaultLocations.forEach(function(location){
+			location.clickLink = document.getElementById('favorite-place-' + location.index());
+			location.clickLink.onclick = function(){
+				console.log('hello world');
+			}
+		})
+	}
 
 	this.placeType = ko.computed(function() {
 		return self.selectedPlaceType();
@@ -371,6 +382,10 @@ var ViewModel = function() {
 	this.nearbyPlacesVisible = ko.computed(function(){
     	return self.model.nearbyVisible();
     });
+
+	this.placeLinkClicked = function(place){
+		console.log(place);
+	}
 
 	this.setCurrentPlace = function(location){
 		///assign the currentPlace
@@ -404,7 +419,8 @@ var ViewModel = function() {
 
 	this.showDefault = function(index){
 		if (self.filterStringLength() > 0){
-			if(self.model.defaultLocations[index()].name().includes(self.filterString())){
+			//var lowerString = self.filterString.toLowerCase();
+			if(self.model.defaultLocations[index()].name().toLowerCase().includes(self.filterString().toLowerCase())){
 				if (self.model.defaultLocations[index()].hidden() === true){
 					self.model.defaultLocations[index()].hidden(false);
 					gMap.changeDefault(index(), "show");
@@ -429,14 +445,6 @@ var ViewModel = function() {
 		}
 	};
 
-	this.createPlace = function(locations) {
-		///create places for each of the locations objects
-		var index = 0;
-		locations.forEach(function(place){
-			place.index = index++;
-			self.model.defaultLocations.push(new Place(place)); 
-		});
-	};
 
     this.clearPlaces = function(){
     	///clear out the nearbyPlacesList array
