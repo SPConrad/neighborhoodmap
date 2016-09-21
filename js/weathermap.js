@@ -1,7 +1,7 @@
 ///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
 
 
-var weatherApiUrlBase = "https://api.openweathermap.org/data/2.5/";
+var weatherApiUrlBase = "http://api.openweathermap.org/data/2.5/";
 
 var currentWeatherUrl = "weather?";
 

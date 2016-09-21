@@ -61,6 +61,7 @@ function Map()
 		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
 			self.locateAndCreateMarkers(place, "large");
+			
 		});
 
 		///resize the map when the browser is resized 
@@ -72,24 +73,25 @@ function Map()
 
 		///listen for a non-marker click to close the current marker info and close the info window
 		google.maps.event.addListener(self.map, 'click', function(){
-			self.toggleNearbyCollapse("hide");
-			self.infoWindow.close();
-			viewModel.setCurrentPlace('null');
-			self.clearNearbyPlaces();
-			self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-			self.map.fitBounds(self.bounds);
+			
+			if (self.currentBigMarker !== "") {
+				self.toggleNearbyCollapse("hide");
+				self.infoWindow.close();
+				viewModel.setCurrentPlace('null');
+				self.clearNearbyPlaces();
+				self.currentBigMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+				self.map.fitBounds(self.bounds);
+			}
 		});
-
-		viewModel.assignDefaultHyperlinks();
 
 	};
 
 	this.changeDefault = function(index, showOrHide){
 		console.log(index);
 		if (showOrHide === "hide"){
-			self.defaultMarkers[index].setMap(null);
+			self.defaultMarkers[index].marker.setMap(null);
 		} else if (showOrHide === "show"){
-			self.defaultMarkers[index].setMap(self.map);
+			self.defaultMarkers[index].marker.setMap(self.map);
 		}
 	}
 
@@ -191,18 +193,18 @@ function Map()
 			});
 			self.bounds.extend(marker.position);
 
-
+			var markerObject = {'marker': marker, 'location': locationInfo}
 			
 			///if it's a large marker, it is a default location. 
 			if (size === "large"){
-				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+				markerObject.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 				///starting radius is 500 meters
 				var placesRadius = 500;
 				///add a listener to the marker
-				google.maps.event.addListener(marker, 'click', function(){
+				google.maps.event.addListener(markerObject.marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
 						console.log(this);
-						self.setCurrentPlace(this, locationInfo);
+						self.setCurrentPlace(markerObject);
 						/*marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 						if(self.currentBigMarker !==  ""){
 							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
@@ -219,7 +221,13 @@ function Map()
 					}
 				});								
 					///add to default locations array
-				self.defaultMarkers.push(marker);
+					console.log(markerObject)
+				self.defaultMarkers.push(markerObject);
+				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index());
+				clickLink.onclick = function(){
+					self.setCurrentPlace(markerObject);
+				}
+
 			} else if (size === "small"){
 				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 				///if it's a small marker, it's a nearby place.
@@ -237,21 +245,22 @@ function Map()
 			}
 		}; 
 
-	this.setCurrentPlace = function(thisMarker, locationInfo){
+	this.setCurrentPlace = function(thisMarker){
 		if (self.currentBigMarker !== thisMarker) {
-			thisMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+			thisMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 			if(self.currentBigMarker !==  ""){
-				self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+				self.currentBigMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 			}
 			///popup the name of the location
-			self.showInfo(thisMarker, locationInfo.name());
+			console.log(thisMarker);
+			self.showInfo(thisMarker.marker, thisMarker.location.name());
 			self.currentBigMarker = thisMarker;
 			///clear old nearby places if they exist	
 			viewModel.clearPlaces();	
 			///do a standard search of nearby restaurants 			 
-			self.searchPlacesByArea(locationInfo, 500);
+			self.searchPlacesByArea(thisMarker.location, 500);
 			///set the clicked marker as the current location
-			viewModel.setCurrentPlace(locationInfo);	
+			viewModel.setCurrentPlace(thisMarker.location);	
 		}
 
 	}

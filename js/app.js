@@ -313,9 +313,6 @@ var Place = function(data) {
 
 	this.hidden = ko.observable(false);
 
-	this.clickLink = "";
-
-
 };
 
 
@@ -352,14 +349,14 @@ var ViewModel = function() {
 		return self.model.defaultLocations;
 	});
 
-	this.assignDefaultHyperlinks = function(){
+	/*this.assignDefaultHyperlinks = function(){
 			self.model.defaultLocations.forEach(function(location){
 			location.clickLink = document.getElementById('favorite-place-' + location.index());
 			location.clickLink.onclick = function(){
-				console.log('hello world');
+				console.log(location.name());
 			}
 		})
-	}
+	}*/
 
 	this.placeType = ko.computed(function() {
 		return self.selectedPlaceType();
