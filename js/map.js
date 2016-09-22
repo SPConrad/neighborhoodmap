@@ -32,6 +32,7 @@ function Map()
 
 	this.geocodeBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
 
+
 	///init map
 	self.initMap = function() {
 		self.map = new google.maps.Map(document.getElementById('map'), {
@@ -72,8 +73,7 @@ function Map()
 		});
 
 		///listen for a non-marker click to close the current marker info and close the info window
-		google.maps.event.addListener(self.map, 'click', function(){
-			
+		google.maps.event.addListener(self.map, 'click', function(){			
 			if (self.currentBigMarker !== "") {
 				self.toggleNearbyCollapse("hide");
 				self.infoWindow.close();
@@ -81,13 +81,13 @@ function Map()
 				self.clearNearbyPlaces();
 				self.currentBigMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 				self.map.fitBounds(self.bounds);
-			}
+				self.currentBigMarker = "";
+				}
 		});
 
 	};
 
 	this.changeDefault = function(index, showOrHide){
-		console.log(index);
 		if (showOrHide === "hide"){
 			self.defaultMarkers[index].marker.setMap(null);
 		} else if (showOrHide === "show"){
@@ -113,6 +113,12 @@ function Map()
 		self.currentNearbyPlace = "";
 	};
 
+	this.resetNearby = function(){
+		self.nearbyPlaces.forEach(function(place){
+			viewModel.changeNearbyCSS(place.index, "nearby-place");
+		})
+	}
+
 	this.closeNearbyPlace = function(place){
 		///check to see if there is an old nearbyplace
 		if (place !== "") {
@@ -126,7 +132,14 @@ function Map()
 	this.changeOldMarker = function(){
 		self.closeNearbyPlace(self.oldNearbyPlace);
 		///assign the old nearbyplace to be the current one so it may be changed when the next one is selected
-		self.oldNearbyPlace = self.currentNearbyPlace;		
+		self.oldNearbyPlace = self.currentNearbyPlace;
+		/*self.nearbyPlaces.forEach(function(place){
+			if (place.index !== self.currentNearbyPlace.index){
+				viewModel.changeNearbyCSS(place.index, "nearby-place miniaturize");
+			} else {
+				viewModel.changeNearbyCSS(place.index, "nearby-place");
+			}
+		})	*/	
 	};
   
 	this.activateCurrentMarker = function(index){
@@ -163,9 +176,8 @@ function Map()
 		var geoCoder = new google.maps.Geocoder();
 		///create request
 		var request = {
-			address: location.requestAddress()
+			address: location.requestAddress
 		};
-
 		///fire request
 		geoCoder.geocode(request, function(results, status){
 			///response is good, send off the top result
@@ -203,7 +215,6 @@ function Map()
 				///add a listener to the marker
 				google.maps.event.addListener(markerObject.marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
-						console.log(this);
 						self.setCurrentPlace(markerObject);
 						/*marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 						if(self.currentBigMarker !==  ""){
@@ -221,13 +232,11 @@ function Map()
 					}
 				});								
 					///add to default locations array
-					console.log(markerObject)
 				self.defaultMarkers.push(markerObject);
-				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index());
+				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index);
 				clickLink.onclick = function(){
 					self.setCurrentPlace(markerObject);
 				}
-
 			} else if (size === "small"){
 				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 				///if it's a small marker, it's a nearby place.
@@ -252,8 +261,7 @@ function Map()
 				self.currentBigMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 			}
 			///popup the name of the location
-			console.log(thisMarker);
-			self.showInfo(thisMarker.marker, thisMarker.location.name());
+			self.showInfo(thisMarker.marker, thisMarker.location.name);
 			self.currentBigMarker = thisMarker;
 			///clear old nearby places if they exist	
 			viewModel.clearPlaces();	
@@ -289,14 +297,16 @@ function Map()
 	this.getPlaces = function(location, radius, placesType, size) {
 		///make request for places
 		///grab the placeType from the dropdown on the page
-		if (placesType === "" || placesType === undefined) {
+		if (viewModel.placeType() === undefined) {
+			placesType = "restaurant";
+		} else {
 			placesType = viewModel.placeType().key;
 		}
 		///create request variable 
 		request = {
-			location: { lat: location.lat(), lng: location.lng() },
+			location: { lat: location.lat, lng: location.lng },
 			radius: radius,
-			type: [placesType]
+			type: placesType
 		};
 
 		///hide the old markers
@@ -337,36 +347,20 @@ function Map()
 								///do nothing
 							} else 	if (self.currentNearbyPlace.index != place.index){
 								///this will be hit if user clicked on a new button
-								///expanded by itself
-								///change marker color
-								self.currentNearbyPlace = new self.NearbyPlaceObject(place.index);
-								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
-															///ensure there is an old place to modify
-								if (self.oldNearbyPlace !== ""){
-									///close old button, change old marker color
-									self.oldNearbyPlace.button.collapse("hide");
-									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
-									
-								}
-									//assign old button to be the new button
-									///asign old nearbyplace 
-									self.oldNearbyPlace == self.currentNearbyPlace;
+								self.showInfo(self.nearbyMarkers[place.index], place.name);	
+								///expand and change color of the current marker
+								self.activateCurrentMarker(place.index);
+								///collapse and change color of the old marker
+								self.changeOldMarker(self.currentNearbyPlace);
 							} else if (self.currentNearbyPlace.index === undefined){
 								///this will be hit if the first action is clicking a button
-								///expanded by itself
-								///change marker color
-								self.currentNearbyPlace = self.NearbyPlaceObject(place.index);
-								self.currentNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
-								///ensure there is an old place to modify
-								if (self.oldNearbyPlace !== ""){
-									///close old button, change old marker color
-									self.oldNearbyPlace.button.collapse("hide");
-									self.oldNearbyPlace.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
-									}
-									//assign old button to be the new button
-									self.oldNearbyPlace = self.currentNearbyPlace;
+								self.showInfo(self.nearbyMarkers[place.index], place.name);	
+								///expand and change color of the current marker
+								self.activateCurrentMarker(place.index);
+								///collapse and change color of the old marker
+								self.changeOldMarker(self.currentNearbyPlace);
 							}
-							});
+						});
 					});
 				}	
 			} else
@@ -382,6 +376,17 @@ function Map()
 		//weather.forecastCity(location);
 	};
 
+
+	/*this.movePlaceToTop = function(index){
+		viewModel.movePlaceToTop(index);
+		var buffer = self.nearbyPlaces[0];
+		self.nearbyPlaces[0] = self.nearbyPlaces[index];
+		self.nearbyPlaces[index] = buffer; 
+
+		var buffer1 = self.nearbyMarkers[0];
+		self.nearbyMarkers[0] = self.nearbyMarkers[index];
+		self.nearbyMarkers[index] = buffer1;
+	}*/
 	
 
 
@@ -409,3 +414,8 @@ var initMap = function() {
 	gMap = new Map();
 	gMap.initMap();
 };
+
+
+var gMapsErrorHandler = function (){
+	alert("Could not load map, sorry about that. Please try refreshing the page.");
+}

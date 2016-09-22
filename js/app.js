@@ -275,43 +275,37 @@ var Place = function(data) {
 	///they'll all be in WA for this demo
 	var state = 'WA';
 	///if there is a data.geometry, get the lat and lng from there. otherwise use what is passed in
-	var lat = data.geometry ? data.geometry.location.lat() : data.lat;
-	var lng = data.geometry ? data.geometry.location.lng() : data.lng;
+	var lat = data.geometry ? data.geometry.location.lat : data.lat;
+	var lng = data.geometry ? data.geometry.location.lng : data.lng;
 
-	this.index = ko.observable(data.index);
-	this.name = ko.observable(data.name);
-	this.lat = ko.observable(lat);
-	this.lng = ko.observable(lng);
-	this.street = ko.observable(data.street);
-	this.city = ko.observable(data.city);
-	this.state = ko.observable(state);
+	this.index = data.index;
+	this.name = data.name;
+	this.lat = lat;
+	this.lng = lng;
+	this.street = data.street;
+	this.city = data.city;
+	this.state = state;
 
-	this.priceLevel = ko.observable(data.price_level);
+	this.priceLevel = data.price_level;
 	///make a readable price variable 
-	this.priceText = ko.computed(function(){
-		var text = "$";	
-		if(typeof(self.priceLevel()) === 'number'){
-			return text.repeat(self.priceLevel());
-		} else {
-			return "";
-		}
-	});
-	this.ratings = ko.observable(data.rating); 
-	this.types = ko.observableArray(data.types);
-	this.type = ko.observable(data.types ? data.types[0] : "none");
+	this.priceText = ""; 
+	var text = "$"
+	if(typeof(self.priceLevel === 'number')){
+		self.priceText = text.repeat(self.priceLevel);
+	} 
+	this.ratings = data.rating; 
+	this.types = data.types;
+	this.type = data.types ? data.types[0] : "none";
 	///make an easily used address object
-	this.address = ko.computed(function() { 
-		return self.street() + ", " + self. city() + ", " + self.state();
-	});
+	this.address = self.street + ", " + self.city + ", " + self.state;
 	///make an address object for use in requests 
-	this.requestAddress = ko.computed(function() {
-		return self.address().replace(/ /g, "+");
-	});
+
+	this.requestAddress = self.address.replace(/ /g, "+");
 
 	///css trickery for smaller browsers
 	this.cssClass = ko.observable("show");
 
-	this.hidden = ko.observable(false);
+	this.hidden = false;
 
 };
 
@@ -331,7 +325,7 @@ var ViewModel = function() {
 
 	this.filterString = ko.observable("");
 
-	this.selectedPlaceType = ko.observable("");
+	this.selectedPlaceType = ko.observable();
 
 	this.currentWeather = ko.computed(function() {
 		return self.model.currentWeather();
@@ -372,17 +366,13 @@ var ViewModel = function() {
 		if (self.currentPlace() == -1){
 			return -1;
 		} else {
-			return self.currentPlace().index();
+			return self.currentPlace().index;
 		}
 	});
 
 	this.nearbyPlacesVisible = ko.computed(function(){
     	return self.model.nearbyVisible();
     });
-
-	this.placeLinkClicked = function(place){
-		console.log(place);
-	}
 
 	this.setCurrentPlace = function(location){
 		///assign the currentPlace
@@ -399,8 +389,8 @@ var ViewModel = function() {
 			///hide the other default places
 			self.changeCSS("hide-when-small");			
 			///show the selected default place
-			self.model.defaultLocations[location.index()].cssClass("show current-place");
-			self.currentPlace(self.model.defaultLocations[location.index()]);
+			self.model.defaultLocations[location.index].cssClass("show current-place");
+			self.currentPlace(self.model.defaultLocations[location.index]);
 		}
 	};
 
@@ -410,32 +400,39 @@ var ViewModel = function() {
 		});
 	};
 
+	this.changeNearbyCSS = function(index, newCSS){
+		//self.nearbyPlacesList()[index].cssClass(newCSS);
+		document.getElementById('nearby-parent-' + index).className = newCSS;
+		//console.log(self.nearbyPlacesList()[index].cssClass());
+	}
+
 	this.searchPlaces = function(){
-		gMap.searchPlacesByType(self.currentPlace(), self.placeType().key);
+		self.clearPlaces();
+		gMap.searchPlacesByType(self.currentPlace(), self.placeType.key);
 	};
 
 	this.showDefault = function(index){
 		if (self.filterStringLength() > 0){
 			//var lowerString = self.filterString.toLowerCase();
-			if(self.model.defaultLocations[index()].name().toLowerCase().includes(self.filterString().toLowerCase())){
-				if (self.model.defaultLocations[index()].hidden() === true){
-					self.model.defaultLocations[index()].hidden(false);
-					gMap.changeDefault(index(), "show");
+			if(self.model.defaultLocations[index].name.toLowerCase().includes(self.filterString().toLowerCase())){
+				if (self.model.defaultLocations[index].hidden() === true){
+					self.model.defaultLocations[index].hidden = false;
+					gMap.changeDefault(index, "show");
 				}
 				return true;
 			} else{
-				if (self.model.defaultLocations[index()].hidden() === false)
+				if (self.model.defaultLocations[index].hidden === false)
 				{
-					self.model.defaultLocations[index()].hidden(true)
-					gMap.changeDefault(index(), "hide");
+					self.model.defaultLocations[index].hidden = true;
+					gMap.changeDefault(index, "hide");
 				}
 				return false;
 			}
 		} else {
 			self.model.defaultLocations.forEach(function(location){
-				if (location.hidden() === true){
-					gMap.changeDefault(location.index(), "show");
-					location.hidden(false);
+				if (location.hidden === true){
+					gMap.changeDefault(location.index, "show");
+					location.hidden = false ;
 				}
 			})
 			return true;
@@ -449,6 +446,16 @@ var ViewModel = function() {
     		self.nearbyPlacesList.removeAll();
 		}
     };
+
+    /*this.movePlaceToTop = function(index){
+    	var bufferPlace = new self.nearbyPlacesList()[index];
+    	//self.nearbyPlacesList()[0] = self.nearbyPlacesList()[index];
+    	//self.nearbyPlacesList()[index] = bufferPlace;
+    	console.log(bufferPlace);
+    	self.nearbyPlacesList.remove(self.nearbyPlacesList()[index]);
+    	self.nearbyPlacesList.unshift(bufferPlace);
+    	console.log(self.nearbyPlacesList());
+    }*/
 
 	this.changeNearbyPlaces = function(nearbyPlaces){
 		var self = this;

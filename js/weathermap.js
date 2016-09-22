@@ -29,12 +29,16 @@ function httpRequest(url, callback)
 	///create request var
     var xhr = new XMLHttpRequest();
 
+    ///listen for the response
+    xhr.addEventListener("readystatechange", callback, false);
+
     ///send the request
     xhr.open('GET', url, true);
     xhr.send();
+}
 
-    ///listen for the response
-    xhr.addEventListener("readystatechange", callback, false);
+this.callFailed = function(){
+	console.log("Weather API call failed, sorry about that");
 }
 
 function forecastByCity(location){
@@ -43,40 +47,41 @@ function forecastByCity(location){
 
 	///fire request
 	httpRequest(url, function(response) {
-		if (response.target.readyState === 4 && response.target.status === 200){
-			///if the request comes back ready and with a 200
+		if (response.target.readyState === 4){
+			if (response.target.status === 200){
+				///if the request comes back ready and with a 200
 
-			///assign weatherData
-			var weatherData = response.target.responseText;
-			///parse it (I dislike assigning and parsing at the same time)
-			var formattedWeatherData = JSON.parse(weatherData);
+				///assign weatherData
+				var weatherData = response.target.responseText;
+				///parse it (I dislike assigning and parsing at the same time)
+				var formattedWeatherData = JSON.parse(weatherData);
 
-			///create empty forecasts arrray
-			var forecasts = [];
-			///limit to three forecasts
-			var numOfForecasts = 3;
+				///create empty forecasts arrray
+				var forecasts = [];
+				///limit to three forecasts
+				var numOfForecasts = 3;
 
-			///assign forecasts array
-			for (var i = 0; i < numOfForecasts; i++){
-				forecasts.push(formattedWeatherData.list[i]);
+				///assign forecasts array
+				for (var i = 0; i < numOfForecasts; i++){
+					forecasts.push(formattedWeatherData.list[i]);
+				}
+
+				///make a readable date for each one
+				forecasts.forEach(function(forecast){
+					var date = new Date(0);
+					date.setUTCSeconds(forecast.dt);
+					//console.log(date);
+				});
+			} else if (response.target.status !== 200){
+				console.log("Error acquiring weather data!");
 			}
-
-			///make a readable date for each one
-			forecasts.forEach(function(forecast){
-				var date = new Date(0);
-				date.setUTCSeconds(forecast.dt);
-				//console.log(date);
-			});
-
-
 		}
-
 	});
 }
 
 function currentWeatherByCoord(location) {
 	///generate a request url
-	var url = weatherApiUrlBase + currentWeatherUrl + 'lat=' + location.lat() + '&lon=' + location.lng() + weatherApiKey;
+	var url = weatherApiUrlBase + currentWeatherUrl + 'lat=' + location.lat + '&lon=' + location.lng + weatherApiKey;
 	///fire request
 	httpRequest(url, function(response) {
 		if (response.target.readyState === 4 && response.target.status === 200){
