@@ -289,7 +289,7 @@ var Place = function(data) {
 	this.priceLevel = data.price_level;
 	///make a readable price variable 
 	this.priceText = ""; 
-	var text = "$"
+	var text = "$";
 	if(typeof(self.priceLevel === 'number')){
 		self.priceText = text.repeat(self.priceLevel);
 	} 
@@ -404,7 +404,7 @@ var ViewModel = function() {
 		//self.nearbyPlacesList()[index].cssClass(newCSS);
 		document.getElementById('nearby-parent-' + index).className = newCSS;
 		//console.log(self.nearbyPlacesList()[index].cssClass());
-	}
+	};
 
 	this.searchPlaces = function(){
 		self.clearPlaces();
@@ -434,7 +434,7 @@ var ViewModel = function() {
 					gMap.changeDefault(location.index, "show");
 					location.hidden = false ;
 				}
-			})
+			});
 			return true;
 		}
 	};
@@ -469,8 +469,7 @@ var ViewModel = function() {
 	};
 
 	this.setCurrentWeather = function(weather){
-		weather.readableCondition = self.weatherCodes()[weather.weather[0].id].label;
-		weather.readableWindDirection = getWindDirection(weather.wind.deg);
+		weather.readableWindDirection = getWindDirection(weather.windBearing);
 		self.model.currentWeather(weather);
 	};
 };

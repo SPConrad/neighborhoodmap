@@ -14,7 +14,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="master-list-container">
-				<div class="defaultList">		
+				<div class="default-list">		
 					<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
 					<span data-bind="text: getCurrentPlace().index"></span>
 					<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
@@ -26,7 +26,7 @@
 										<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + index}, " type="button" class="btn btn-info" data-toggle="collapse"></button>
 										<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + index}">
 											<ul>
-												<li data-bind="visible: ratings, text: 'Average rating ' + ratings + ' out of 5'"></li>
+												<li data-bind="visible: ratings, text: ratings + ' out of 5'"></li>
 												<li data-bind="visible: priceText, text: 'Price level: ' + priceText "></li>
 												<li data-bind="text: type"></li>
 											</ul>
@@ -48,10 +48,10 @@
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
 					<span class="hide-when-small" data-bind="text: 'The temperature in ' + name + ' is '"></span>
-					<span class="temp" data-bind="text: tempInFar + '&deg;\F'"></span>
+					<span class="temp" data-bind="text: temperature + '&deg;\F'"></span>
 					<span class="hide-when-small">Current conditions are </span>
-					<span class="hide-when-small" data-bind="text: readableCondition"></span>
-					<span class="hide-when-small" data-bind="text: ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
+					<span class="hide-when-small" data-bind="text: summary"></span>
+					<span class="hide-when-small" data-bind="text: ' with a ' + windSpeed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
 					<!-- /ko -->
 				</div>
 			</div>

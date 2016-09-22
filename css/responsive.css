@@ -3,7 +3,7 @@
 
 @media screen and (max-width: 700px){
 	.search {
-		visibility: hidden;
+		display: none;
 	}
 
 	.favorites-list {
@@ -17,6 +17,10 @@
 	.default-list {
 		width: 700px;
 		max-width: 100%;
+	}
+
+	.nearby-places-list {
+		width: 100%;
 	}
 
 	.miniaturize {
@@ -53,6 +57,7 @@
 	}
 
 	.current-place > div > ul {
+		width: 100%;
 		display: flex;
 		flex-wrap: wrap;
 	}
