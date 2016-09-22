@@ -292,9 +292,6 @@ var Place = function(data) {
 
 	if (spacesInName.length > 2){
 		this.name = this.longName.slice(0, spacesInName[2]) + "... ";
-		console.log(this.name);
-		console.log(this.longName.slice(0, spacesInName[2]));
-		console.log(spacesInName[3]);
 	} else {
 		this.name = this.longName;
 	}
