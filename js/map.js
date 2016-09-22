@@ -93,7 +93,7 @@ function Map()
 		} else if (showOrHide === "show"){
 			self.defaultMarkers[index].marker.setMap(self.map);
 		}
-	}
+	};
 
 	this.NearbyPlaceObject = function(index){
 		this.button = $('#nearby-places-' + index);
@@ -116,8 +116,8 @@ function Map()
 	this.resetNearby = function(){
 		self.nearbyPlaces.forEach(function(place){
 			viewModel.changeNearbyCSS(place.index, "nearby-place");
-		})
-	}
+		});
+	};
 
 	this.closeNearbyPlace = function(place){
 		///check to see if there is an old nearbyplace
@@ -205,7 +205,7 @@ function Map()
 			});
 			self.bounds.extend(marker.position);
 
-			var markerObject = {'marker': marker, 'location': locationInfo}
+			var markerObject = {'marker': marker, 'location': locationInfo};
 			
 			///if it's a large marker, it is a default location. 
 			if (size === "large"){
@@ -236,7 +236,7 @@ function Map()
 				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index);
 				clickLink.onclick = function(){
 					self.setCurrentPlace(markerObject);
-				}
+				};
 			} else if (size === "small"){
 				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
 				///if it's a small marker, it's a nearby place.
@@ -271,7 +271,7 @@ function Map()
 			viewModel.setCurrentPlace(thisMarker.location);	
 		}
 
-	}
+	};
 
 	this.getNearbyMarkers = function(){
 		return self.nearbyMarkers;
@@ -418,4 +418,4 @@ var initMap = function() {
 
 var gMapsErrorHandler = function (){
 	alert("Could not load map, sorry about that. Please try refreshing the page.");
-}
+};
