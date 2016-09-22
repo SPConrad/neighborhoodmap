@@ -18,16 +18,16 @@
 					<input id="search-text" data-bind="textInput: filterString" placeholder="Filter">
 					<span data-bind="text: getCurrentPlace().index"></span>
 					<ul data-bind="foreach: placesList" id="favorites-list" class="favorites-list">
-						<li data-bind="if: $parent.showDefault(index), attr: { 'class': cssClass}"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + $index()}"></a>
-							<!-- ko if: index() == $parent.getCurrentPlace() -->
-							<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + $index()}">
+						<li data-bind="if: $parent.showDefault(index), attr: { 'class': cssClass}"><a href="#" data-bind="text: name, attr: {'id': 'favorite-place-' + index }"></a>
+							<!-- ko if: index == $parent.getCurrentPlace() -->
+							<div class="nearby-places-item" data-bind="attr: {'id': 'nearby-places-item-' + index}">
 								<ul data-bind="display: nearbyVisible, foreach: $parent.nearbyPlacesList" id="nearby-places-list" class="nearby-places-list">
-									<li id="nearby-places-item" class="nearby-place">
-										<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + $index()}" type="button" class="btn btn-info" data-toggle="collapse"></button>
-										<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + $index()}">
+									<li data-bind="attr: { 'id': 'nearby-parent-' + index}" class="nearby-place">
+										<button data-bind="text: name, attr: {'data-target': '#nearby-places-' + index}, " type="button" class="btn btn-info" data-toggle="collapse"></button>
+										<div class="collapse" data-bind="attr: {'id': 'nearby-places-' + index}">
 											<ul>
-												<li data-bind="visible: ratings, text: 'Average rating ' + ratings() + ' out of 5'"></li>
-												<li data-bind="visible: priceText, text: 'Price level: ' + priceText()"></span></li>
+												<li data-bind="visible: ratings, text: 'Average rating ' + ratings + ' out of 5'"></li>
+												<li data-bind="visible: priceText, text: 'Price level: ' + priceText "></li>
 												<li data-bind="text: type"></li>
 											</ul>
 										</div>
@@ -38,15 +38,17 @@
 						</li>
 					</ul>
 				</div>
-				<div class="search">
-					<select data-bind="options: placesTypes, value: selectedPlaceType, optionsText: 'name', optionsAfterRender: " id="places-type-list" class="places-type-list">
-					</select>		
-					<button data-bind="click: $root.searchPlaces" id="search-button" type="button">Search Nearby</button>	
-				</div>
+				<!-- ko if: getCurrentPlace() !== -1 -->
+					<div class="search" data-bind="if: currentPlace != -1">
+						<select data-bind="options: placesTypes, value: selectedPlaceType, optionsText: 'name'" id="places-type-list" class="places-type-list">
+						</select>		
+						<button data-bind="click: $root.searchPlaces" id="search-button" type="button">Search Nearby</button>	
+					</div>
+				<!-- /ko -->
 				<div class="weather-container">
 					<!-- ko with: currentWeather -->
 					<span class="hide-when-small" data-bind="text: 'The temperature in ' + name + ' is '"></span>
-					<span class="temp" data-bind="text: tempInFar + '&deg\F'"></span>
+					<span class="temp" data-bind="text: tempInFar + '&deg;\F'"></span>
 					<span class="hide-when-small">Current conditions are </span>
 					<span class="hide-when-small" data-bind="text: readableCondition"></span>
 					<span class="hide-when-small" data-bind="text: ' with a ' + wind.speed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
@@ -65,7 +67,7 @@
 	<script src="js/map.js" type="text/javascript"></script>
 	<script src="js/app.js" type="text/javascript"></script>
 	<script async defer src=
-        "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCv8zOyCn_cce5C3JTWyMmycO1xeRYxRG8&v=3&callback=initMap" type="text/javascript">
+        "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCv8zOyCn_cce5C3JTWyMmycO1xeRYxRG8&v=3&callback=initMap" type="text/javascript" onerror="gMapsErrorHandler()" >
     </script>
 </body>
 </html>

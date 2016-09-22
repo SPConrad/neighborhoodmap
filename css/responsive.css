@@ -10,10 +10,22 @@
 		flex-wrap: wrap;
 		width: 100%;
 		display: flex;
+		margin: 0;
+		padding: 0;
 	}
 
-	.nearby-places-list{
-		height: 100%;
+	.default-list {
+		width: 700px;
+		max-width: 100%;
+	}
+
+	.miniaturize {
+		-webkit-transition: 1s ease-in-out;
+    	-moz-transition: 1s ease-in-out;
+    	transition: 1s ease-in-out;
+		-ms-transform: scale(0.50, 0.50);
+		-webkit-transform: scale(0.50, 0.50);
+		transform: scale(0.50, 0.50);
 	}
 
 	.ignore-button {
@@ -51,106 +63,24 @@
 	}
 
 	.weather-container{
-		position: absolute;
-		right: 0;
-		width: 20%;
-		top: 0;
+		display: none;
 	}
 
-	.temp {
-		position: absolute;
-		right: 0;
-		text-align: center;
-		font-size: 4em;
-
-	}
-
-	.show {
-
-	}
 
 	.show > a {
 		padding: 0px 5px 0px 5px;
 	}
 
 	.hide-when-small {
-		visibility: hidden;
 		display: none;
 	}
-}
 
-
-/*@media screen and (max-width: 700px){
-	.row {
-		
-	}
-
-	.search {
-		visibility: hidden;
-	}
-	.favorites-list {
-		width: 100%;
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	.nearby-places-list{
-		height: 100%;
-	}
-	
-
-	.master-list-container {		
-		height: 30%;
-		width: 100%;
-		display: flex;
-	}
-
-	.map {
-		height: 70%;
-		width: 100%;
-	}
-
-	.current-place {
-		width: 100%;
-	}
-
-	.current-place > div > ul {
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	.nearby-place {
-		text-align: center;
-		width: 50%;
-	}
-
-	.weather-container{
+	.embiggen {
 		position: absolute;
-		right: 0;
-		width: 20%;
-		top: 0;
-	}
-
-	.temp {
-		text-align: center;
-		font-size: 4em;
-
-	}
-
-	.show {
-
-	}
-
-	.show > a {
-		padding: 0px 5px 0px 5px;
-	}
-
-	.hide-when-small {
-		visibility: hidden;
-		display: none;
+		left: 5%;
+		top: 15%;
 	}
 }
-*/
 @media screen and (min-width: 701px){
 	.row {
 		display: flex;
