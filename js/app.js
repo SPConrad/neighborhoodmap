@@ -469,8 +469,7 @@ var ViewModel = function() {
 	};
 
 	this.setCurrentWeather = function(weather){
-		weather.readableCondition = self.weatherCodes()[weather.weather[0].id].label;
-		weather.readableWindDirection = getWindDirection(weather.wind.deg);
+		weather.readableWindDirection = getWindDirection(weather.windBearing);
 		self.model.currentWeather(weather);
 	};
 };
