@@ -145,6 +145,7 @@ function Map()
 	this.activateCurrentMarker = function(index){
 		///create the new currentNearbyPlace variable
 		self.currentNearbyPlace = new self.NearbyPlaceObject(index);
+		viewModel.setCurrentNearbyPlace(self.currentNearbyPlace);
 		///expand the button with the place's info
 		self.currentNearbyPlace.button.collapse("show");
 		///change the marker color

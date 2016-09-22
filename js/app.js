@@ -258,6 +258,7 @@ var Model = function () {
     this.nearbyList = self.defaultLocations;
     this.placesTypes = ko.observableArray(placesTypes);
     this.currentPlace = this.defaultLocations[0];
+    this.currentNearbyPlace = ko.observable();
     this.currentWeather = ko.observable();
     this.weatherForecast = ko.observableArray(); 
     this.weatherCodes = ko.observable();
@@ -279,7 +280,24 @@ var Place = function(data) {
 	var lng = data.geometry ? data.geometry.location.lng : data.lng;
 
 	this.index = data.index;
-	this.name = data.name;
+	this.longName = data.name;
+	var spacesInName = [];
+	for (var i = 0; i < this.longName.length; i++){
+		if (this.longName[i] === " "){
+			spacesInName.push(i);
+		}
+	}
+
+	console.log(spacesInName.length);
+
+	if (spacesInName.length > 2){
+		this.name = this.longName.slice(0, spacesInName[2]) + "... ";
+		console.log(this.name);
+		console.log(this.longName.slice(0, spacesInName[2]));
+		console.log(spacesInName[3]);
+	} else {
+		this.name = this.longName;
+	}
 	this.lat = lat;
 	this.lng = lng;
 	this.street = data.street;
@@ -374,6 +392,15 @@ var ViewModel = function() {
     	return self.model.nearbyVisible();
     });
 
+	this.selectedNearbyPlace = ko.computed(function(){
+		return self.model.currentNearbyPlace();
+	});	
+
+    this.setCurrentNearbyPlace = function(location){
+    	self.model.currentNearbyPlace(self.nearbyPlacesList()[location.index]);
+    	console.log(self.model.currentNearbyPlace());
+    };
+
 	this.setCurrentPlace = function(location){
 		///assign the currentPlace
 		if (location === 'null'){
@@ -463,6 +490,7 @@ var ViewModel = function() {
 		nearbyPlaces.forEach(function(place){
 			self.nearbyPlacesList.push(new Place(place));
 		});
+
 
 		///tell view that nearbyPlaces should be shown
 		self.model.nearbyVisible(true);
