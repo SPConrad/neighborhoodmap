@@ -288,8 +288,6 @@ var Place = function(data) {
 		}
 	}
 
-	console.log(spacesInName.length);
-
 	if (spacesInName.length > 2){
 		this.name = this.longName.slice(0, spacesInName[2]) + "... ";
 	} else {
@@ -439,7 +437,7 @@ var ViewModel = function() {
 		if (self.filterStringLength() > 0){
 			//var lowerString = self.filterString.toLowerCase();
 			if(self.model.defaultLocations[index].name.toLowerCase().includes(self.filterString().toLowerCase())){
-				if (self.model.defaultLocations[index].hidden() === true){
+				if (self.model.defaultLocations[index].hidden === true){
 					self.model.defaultLocations[index].hidden = false;
 					gMap.changeDefault(index, "show");
 				}

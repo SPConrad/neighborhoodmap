@@ -1,7 +1,5 @@
 ///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
 
-
-
 var darkSkyURLBase = "https://api.darksky.net/forecast/";
 
 var darkSkyApiKey = "c97014d507a24972e9fd2ee5940ab16a/";
@@ -21,18 +19,22 @@ function currentWeatherByCoord(location) {
 	//var url = weatherApiUrlBase + currentWeatherUrl + 'lat=' + location.lat() + '&lon=' + location.lng() + weatherApiKey;
 	///fire request
 
-	$.ajax({
+	var request = $.ajax({
 		url: weatherURL,
 		dataType: "jsonp",
-		success: function(data){
-			var weatherData = data.currently;
+		timeout: 2000
+	})
+
+	request.done(function(data){
+		console.log(data);
+		var weatherData = data.currently;
 			viewModel.setCurrentWeather(weatherData);
-		},
-		error: function(data, error){
-			console.log(data);
-			alert("Weather call failed, sorry about that");
-		}
-	});
+	})
+
+	request.fail(function(data){
+		alert("Weather call failed, sorry about that");
+		console.log(data);
+	})
 }
 
 var weather = new Weather();
