@@ -92,7 +92,6 @@ function Map()
 			self.defaultMarkers[index].marker.setMap(null);
 		} else if (showOrHide === "show"){
 			self.defaultMarkers[index].marker.setMap(self.map);
-			self.createClickLink(index);
 		}
 	};
 
@@ -222,7 +221,6 @@ function Map()
 				});								
 					///add to default locations array
 				self.defaultMarkers.push(markerObject);
-				self.createClickLink(markerObject.location.index);
 				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index);
 				clickLink.onclick = function(){
 					self.setCurrentPlace(markerObject.location.index);
