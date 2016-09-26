@@ -318,7 +318,12 @@ var Place = function(data) {
 	///css trickery for smaller browsers
 	this.cssClass = ko.observable("show");
 
-	this.hidden = false;
+	this.hidden = ko.observable(false);
+
+	this.acceptedValue = ko.computed(function(){
+		return self.hidden();
+	});
+
 
 };
 
@@ -336,7 +341,84 @@ var ViewModel = function() {
 
 	this.currentPlace = ko.observable(-1);
 
-	this.filterString = ko.observable("");
+	this.newFilter = ko.observable("");
+
+	this.getPlaceClickLink = function(index){
+		if (document.getElementById('favorite-place-' + index) !== null){
+			var clickLink = document.getElementById('favorite-place-' + index);
+			clickLink.onclick = function(){
+				gMap.setCurrentPlace(index);
+				///self.setCurrentPlace(self.model.defaultLocations[index]);
+			};
+		}
+	}
+
+	this.filterString = ko.pureComputed({
+		read: self.newFilter,
+		write: function(value){
+			///if there is anything in the filter
+			if (value.length > 0){
+				///go through each location
+				self.model.defaultLocations.forEach(function(location){
+					///if it matches what is in the string
+					if(location.name.toLowerCase().includes(value.toLowerCase())){
+						///don't hide it
+						if (location.hidden() === true){
+							location.hidden(false);
+							gMap.changeDefault(location.index, "show");
+							self.getPlaceClickLink(location.index);
+						}
+					} else {
+						///if it doesn't match and isn't hidden
+						if (location.hidden() === false){
+							///hide it
+							location.hidden(true);
+							gMap.changeDefault(location.index, "hide");
+						}
+					}
+				});
+			} else {
+				///if there's nothing in the filter
+				self.model.defaultLocations.forEach(function(location){
+					///don't hide anything
+					location.hidden(false);
+					gMap.changeDefault(location.index, "show");
+					self.getPlaceClickLink(location.index);
+				});
+			}
+		},
+		owner: this
+	});
+
+
+	this.showDefault = function(index){
+		if (self.filterStringLength() > 0){
+			//console.log("hello world");
+			//var lowerString = self.filterString.toLowerCase();
+			if(self.model.defaultLocations[index].name.toLowerCase().includes(self.filterString().toLowerCase())){
+				if (self.model.defaultLocations[index].hidden === true){
+					self.model.defaultLocations[index].hidden = false;
+					gMap.changeDefault(index, "show");
+				}
+				return true;
+			} else{
+				if (self.model.defaultLocations[index].hidden === false)
+				{
+					self.model.defaultLocations[index].hidden = true;
+					gMap.changeDefault(index, "hide");
+				}
+				return false;
+			}
+		} else {
+			self.model.defaultLocations.forEach(function(location){
+				if (location.hidden === true){
+					gMap.changeDefault(location.index, "show");
+					location.hidden = false;
+				}
+			});
+			return true;
+		}
+	};
 
 	this.selectedPlaceType = ko.observable();
 
@@ -355,15 +437,6 @@ var ViewModel = function() {
 	this.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
 	});
-
-	/*this.assignDefaultHyperlinks = function(){
-			self.model.defaultLocations.forEach(function(location){
-			location.clickLink = document.getElementById('favorite-place-' + location.index());
-			location.clickLink.onclick = function(){
-				console.log(location.name());
-			}
-		})
-	}*/
 
 	this.placeType = ko.computed(function() {
 		return self.selectedPlaceType();
@@ -393,7 +466,6 @@ var ViewModel = function() {
 
     this.setCurrentNearbyPlace = function(location){
     	self.model.currentNearbyPlace(self.nearbyPlacesList()[location.index]);
-    	console.log(self.model.currentNearbyPlace());
     };
 
 	this.setCurrentPlace = function(location){
@@ -425,7 +497,6 @@ var ViewModel = function() {
 	this.changeNearbyCSS = function(index, newCSS){
 		//self.nearbyPlacesList()[index].cssClass(newCSS);
 		document.getElementById('nearby-parent-' + index).className = newCSS;
-		//console.log(self.nearbyPlacesList()[index].cssClass());
 	};
 
 	this.searchPlaces = function(){
@@ -433,33 +504,9 @@ var ViewModel = function() {
 		gMap.searchPlacesByType(self.currentPlace(), self.placeType.key);
 	};
 
-	this.showDefault = function(index){
-		if (self.filterStringLength() > 0){
-			//var lowerString = self.filterString.toLowerCase();
-			if(self.model.defaultLocations[index].name.toLowerCase().includes(self.filterString().toLowerCase())){
-				if (self.model.defaultLocations[index].hidden === true){
-					self.model.defaultLocations[index].hidden = false;
-					gMap.changeDefault(index, "show");
-				}
-				return true;
-			} else{
-				if (self.model.defaultLocations[index].hidden === false)
-				{
-					self.model.defaultLocations[index].hidden = true;
-					gMap.changeDefault(index, "hide");
-				}
-				return false;
-			}
-		} else {
-			self.model.defaultLocations.forEach(function(location){
-				if (location.hidden === true){
-					gMap.changeDefault(location.index, "show");
-					location.hidden = false ;
-				}
-			});
-			return true;
-		}
-	};
+
+
+	
 
 
     this.clearPlaces = function(){

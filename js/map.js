@@ -92,6 +92,7 @@ function Map()
 			self.defaultMarkers[index].marker.setMap(null);
 		} else if (showOrHide === "show"){
 			self.defaultMarkers[index].marker.setMap(self.map);
+			self.createClickLink(index);
 		}
 	};
 
@@ -191,6 +192,10 @@ function Map()
 		});
 	};
 
+	this.createClickLink = function(index){
+		//viewModel.getPlaceClickLink(index);
+	}
+
 	this.createMarker = function(results, locationInfo, size){
 			///prep the necessary variables
 			var lat = results.geometry.location.lat();
@@ -216,27 +221,15 @@ function Map()
 				///add a listener to the marker
 				google.maps.event.addListener(markerObject.marker, 'click', function(){
 					if (self.currentBigMarker !== this) {
-						self.setCurrentPlace(markerObject);
-						/*marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
-						if(self.currentBigMarker !==  ""){
-							self.currentBigMarker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-						}
-						///popup the name of the location
-						self.showInfo(this, locationInfo.name());
-						self.currentBigMarker = this;
-						///clear old nearby places if they exist	
-						viewModel.clearPlaces();	
-						///do a standard search of nearby restaurants 			 
-						self.searchPlacesByArea(locationInfo, placesRadius);
-						///set the clicked marker as the current location
-						viewModel.setCurrentPlace(locationInfo);*/	
+						self.setCurrentPlace(markerObject.location.index);
 					}
 				});								
 					///add to default locations array
 				self.defaultMarkers.push(markerObject);
+				self.createClickLink(markerObject.location.index);
 				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index);
 				clickLink.onclick = function(){
-					self.setCurrentPlace(markerObject);
+					self.setCurrentPlace(markerObject.location.index);
 				};
 			} else if (size === "small"){
 				marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');
@@ -255,7 +248,12 @@ function Map()
 			}
 		}; 
 
-	this.setCurrentPlace = function(thisMarker){
+	this.setCurrentPlace = function(index){
+		console.log("------- Set Current Place Map.js -------");
+		console.log(index);
+		console.log(self.defaultMarkers[index]);
+		console.log(self.defaultMarkers[index].location.name)
+		var thisMarker = self.defaultMarkers[index];
 		if (self.currentBigMarker !== thisMarker) {
 			thisMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 			if(self.currentBigMarker !==  ""){

@@ -26,14 +26,12 @@ function currentWeatherByCoord(location) {
 	})
 
 	request.done(function(data){
-		console.log(data);
 		var weatherData = data.currently;
 			viewModel.setCurrentWeather(weatherData);
 	})
 
 	request.fail(function(data){
 		alert("Weather call failed, sorry about that");
-		console.log(data);
 	})
 }
 
