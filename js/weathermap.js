@@ -23,16 +23,16 @@ function currentWeatherByCoord(location) {
 		url: weatherURL,
 		dataType: "jsonp",
 		timeout: 2000
-	})
+	});
 
 	request.done(function(data){
 		var weatherData = data.currently;
 			viewModel.setCurrentWeather(weatherData);
-	})
+	});
 
 	request.fail(function(data){
 		alert("Weather call failed, sorry about that");
-	})
+	});
 }
 
 var weather = new Weather();

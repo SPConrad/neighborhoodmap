@@ -192,10 +192,6 @@ function Map()
 		});
 	};
 
-	this.createClickLink = function(index){
-		//viewModel.getPlaceClickLink(index);
-	}
-
 	this.createMarker = function(results, locationInfo, size){
 			///prep the necessary variables
 			var lat = results.geometry.location.lat();
@@ -249,10 +245,6 @@ function Map()
 		}; 
 
 	this.setCurrentPlace = function(index){
-		console.log("------- Set Current Place Map.js -------");
-		console.log(index);
-		console.log(self.defaultMarkers[index]);
-		console.log(self.defaultMarkers[index].location.name)
 		var thisMarker = self.defaultMarkers[index];
 		if (self.currentBigMarker !== thisMarker) {
 			thisMarker.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');

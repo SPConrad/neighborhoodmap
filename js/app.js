@@ -351,7 +351,7 @@ var ViewModel = function() {
 				///self.setCurrentPlace(self.model.defaultLocations[index]);
 			};
 		}
-	}
+	};
 
 	this.filterString = ko.pureComputed({
 		read: self.newFilter,
