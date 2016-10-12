@@ -1,7 +1,5 @@
 ///Sean Conrad Udacity Front End Neighborhood Map Project September 2016
 
-
-
 ///hardcoded favorite/default places
 var favoritePlaces = [
 	{
@@ -175,61 +173,44 @@ var loadFile= function(callback) {
     xobj.send(null);  
  };
 
-///this was fun
+///self was fun
 var getWindDirection = function(bearing){
 	var windBearing = bearing;
 	switch (true) {
 		case (windBearing > 0 && windBearing <= 11.25):
 			return "Northerly";
-			break;
 		case (windBearing > 11.25 && windBearing <= 35.75):
-			return "North North Easterly";
-			break;
+			return "North North Easterly";			
 		case (windBearing > 35.75 && windBearing <= 56.25):
-			return "North Easterly";
-			break;
+			return "North Easterly";			
 		case (windBearing > 56.25 && windBearing <= 78.75):
-			return "East North Easterly";
-			break;
+			return "East North Easterly";			
 		case (windBearing > 78.75 && windBearing <= 101.25):
-			return "Easterly";
-			break;
+			return "Easterly";			
 		case (windBearing > 101.25 && windBearing <= 123.75):
-			return "East South Easterly";
-			break;
+			return "East South Easterly";			
 		case (windBearing > 123.75 && windBearing <= 146.25):
-			return "South Eastrly";
-			break;
+			return "South Eastrly";			
 		case (windBearing > 146.25 && windBearing <= 168.75):
-			return "South South Easterly";
-			break;
+			return "South South Easterly";			
 		case (windBearing > 168.75 && windBearing <= 191.25):
-			return "Southerly";
-			break;
+			return "Southerly";			
 		case (windBearing > 191.25 && windBearing <= 213.75):
-			return "South South Westerly";
-			break;
+			return "South South Westerly";			
 		case (windBearing > 213.75 && windBearing <= 236.75):
-			return "South Westerly";
-			break;
+			return "South Westerly";			
 		case (windBearing > 236.75 && windBearing <= 258.75):
-			return "West South Westerly";
-			break;
+			return "West South Westerly";			
 		case (windBearing > 258.75 && windBearing <= 281.25):
-			return "Westerly";
-			break;
+			return "Westerly";			
 		case (windBearing > 281.25 && windBearing <= 303.75):
-			return "West North Westerly";
-			break;
+			return "West North Westerly";			
 		case (windBearing > 303.75 && windBearing <= 326.25):
-			return "North Westerly";
-			break;
+			return "North Westerly";			
 		case (windBearing > 326.25 && windBearing <= 348.75):
-			return "North North Westerly";
-			break;
+			return "North North Westerly";			
 		case (windBearing > 348.75 && windBearing <= 0):
-			return "Northerly";
-			break;
+			return "Northerly";			
 	}
 };
 
@@ -253,15 +234,15 @@ var Model = function () {
 	///set up the Model
 	var self = this;
 
-    this.defaultLocations = initLocations(favoritePlaces);
-    this.nearbyVisible = ko.observable(false);
-    this.nearbyList = self.defaultLocations;
-    this.placesTypes = ko.observableArray(placesTypes);
-    this.currentPlace = this.defaultLocations[0];
-    this.currentNearbyPlace = ko.observable();
-    this.currentWeather = ko.observable();
-    this.weatherForecast = ko.observableArray(); 
-    this.weatherCodes = ko.observable();
+    self.defaultLocations = initLocations(favoritePlaces);
+    self.nearbyVisible = ko.observable(false);
+    self.nearbyPlaces = ko.observableArray();
+    self.placesTypes = ko.observableArray(placesTypes);
+    self.currentPlace = self.defaultLocations[0];
+    self.currentNearbyPlace = ko.observable();
+    self.currentWeather = ko.observable();
+    self.weatherForecast = ko.observableArray(); 
+    self.weatherCodes = ko.observable();
 
     loadFile(function(response){
     	var parsedResponse = JSON.parse(response);
@@ -273,57 +254,75 @@ var Model = function () {
 ///a Place variable
 var Place = function(data) {
 	var self = this; 
-	///they'll all be in WA for this demo
+	///they'll all be in WA for self demo
 	var state = 'WA';
 	///if there is a data.geometry, get the lat and lng from there. otherwise use what is passed in
 	var lat = data.geometry ? data.geometry.location.lat : data.lat;
 	var lng = data.geometry ? data.geometry.location.lng : data.lng;
-
-	this.index = data.index;
-	this.longName = data.name;
+	self.index = data.index;
+	self.longName = data.name;
 	var spacesInName = [];
-	for (var i = 0; i < this.longName.length; i++){
-		if (this.longName[i] === " "){
+	for (var i = 0; i < self.longName.length; i++){
+		if (self.longName[i] === " "){
 			spacesInName.push(i);
 		}
 	}
 
 	if (spacesInName.length > 2){
-		this.name = this.longName.slice(0, spacesInName[2]) + "... ";
+		self.name = self.longName.slice(0, spacesInName[2]) + "... ";
 	} else {
-		this.name = this.longName;
+		self.name = self.longName;
 	}
-	this.lat = lat;
-	this.lng = lng;
-	this.street = data.street;
-	this.city = data.city;
-	this.state = state;
+	self.lat = lat;
+	self.lng = lng;
+	self.street = data.street;
+	self.city = data.city;
+	self.state = state;
 
-	this.priceLevel = data.price_level;
+	self.priceLevel = data.price_level;
 	///make a readable price variable 
-	this.priceText = ""; 
+	self.priceText = ""; 
 	var text = "$";
 	if(typeof(self.priceLevel === 'number')){
 		self.priceText = text.repeat(self.priceLevel);
-	} 
-	this.ratings = data.rating; 
-	this.types = data.types;
-	this.type = data.types ? data.types[0] : "none";
+	}
+	self.ratings = data.rating ? data.rating : "none"; 
+	self.types = data.types;
+	self.type = data.types ? data.types[0] : "none";
 	///make an easily used address object
-	this.address = self.street + ", " + self.city + ", " + self.state;
+	self.address = self.street + ", " + self.city + ", " + self.state;
 	///make an address object for use in requests 
 
-	this.requestAddress = self.address.replace(/ /g, "+");
+	self.requestAddress = self.address.replace(/ /g, "+");
 
 	///css trickery for smaller browsers
-	this.cssClass = ko.observable("show");
+	self.cssClass = ko.observable("show");
 
-	this.hidden = ko.observable(false);
+	self.hidden = ko.observable(false);
 
-	this.acceptedValue = ko.computed(function(){
+	self.acceptedValue = ko.computed(function(){
 		return self.hidden();
 	});
 
+	self.infoWindow = function(){
+		var div = '<div id="info-window-content">' +
+			'<span>' + self.name + '</span>' +
+			'<ul id="info-window-list">';
+			if (self.type != "none"){
+				div +='<li id="type">' + self.type + '</li>'; 
+			};
+			if (self.ratings != "none"){
+				div += '<li id="ratings">' + self.ratings + '</li>';
+			};
+			if (self.priceText != ""){
+				div += '<li id="price">' + self.priceText + '</li>';
+			};
+			div += '</ul>' +
+				'</div>';
+			return div; 
+	};
+
+	///console.log(self.infoWindow());
 
 };
 
@@ -334,16 +333,13 @@ var ViewModel = function() {
 	///to avoid any confusion later
 	var self = this;
 
-	this.model = new Model(); 
+	self.model = new Model(); 
 
-	///intialize nearbyPlacesList array
-	this.nearbyPlacesList = ko.observableArray([]);
+	self.currentPlace = ko.observable(-1);
 
-	this.currentPlace = ko.observable(-1);
+	self.newFilter = ko.observable("");
 
-	this.newFilter = ko.observable("");
-
-	this.getPlaceClickLink = function(index){
+	self.getPlaceClickLink = function(index){
 		if (document.getElementById('favorite-place-' + index) !== null){
 			var clickLink = document.getElementById('favorite-place-' + index);
 			clickLink.onclick = function(){
@@ -353,7 +349,7 @@ var ViewModel = function() {
 		}
 	};
 
-	this.filterString = ko.pureComputed({
+	self.filterString = ko.pureComputed({
 		read: self.newFilter,
 		write: function(value){
 			///if there is anything in the filter
@@ -387,11 +383,11 @@ var ViewModel = function() {
 				});
 			}
 		},
-		owner: this
+		owner: self
 	});
 
 
-	this.showDefault = function(index){
+	self.showDefault = function(index){
 		if (self.filterStringLength() > 0){
 			//console.log("hello world");
 			//var lowerString = self.filterString.toLowerCase();
@@ -420,35 +416,35 @@ var ViewModel = function() {
 		}
 	};
 
-	this.selectedPlaceType = ko.observable();
+	self.selectedPlaceType = ko.observable();
 
-	this.currentWeather = ko.computed(function() {
+	self.currentWeather = ko.computed(function() {
 		return self.model.currentWeather();
 	});
 
-	this.weatherCodes = ko.computed(function() {
+	self.weatherCodes = ko.computed(function() {
 		return self.model.weatherCodes(); 
 	});
 
-	this.placesTypes = ko.computed(function() {
+	self.placesTypes = ko.computed(function() {
 		return self.model.placesTypes();
 	});
 
-	this.placesList = ko.computed(function() {
+	self.placesList = ko.computed(function() {
 		return self.model.defaultLocations;
 	});
 
-	this.placeType = ko.computed(function() {
+	self.placeType = ko.computed(function() {
 		return self.selectedPlaceType();
 	});
 
-	//this.searchString = ko.observable("");
-	this.filterStringLength = ko.computed(function(){
+	//self.searchString = ko.observable("");
+	self.filterStringLength = ko.computed(function(){
 		return self.filterString().length;
 	});
 
 
-	this.getCurrentPlace = ko.computed(function(){
+	self.getCurrentPlace = ko.computed(function(){
 		if (self.currentPlace() == -1){
 			return -1;
 		} else {
@@ -456,19 +452,19 @@ var ViewModel = function() {
 		}
 	});
 
-	this.nearbyPlacesVisible = ko.computed(function(){
+	self.nearbyPlacesVisible = ko.computed(function(){
     	return self.model.nearbyVisible();
     });
 
-	this.selectedNearbyPlace = ko.computed(function(){
+	self.selectedNearbyPlace = ko.computed(function(){
 		return self.model.currentNearbyPlace();
 	});	
 
-    this.setCurrentNearbyPlace = function(location){
-    	self.model.currentNearbyPlace(self.nearbyPlacesList()[location.index]);
+    self.setCurrentNearbyPlace = function(index){
+    	self.model.currentNearbyPlace(self.model.nearbyPlaces()[index]);
     };
 
-	this.setCurrentPlace = function(location){
+	self.setCurrentPlace = function(location){
 		///assign the currentPlace
 		if (location === 'null'){
 			///if there is no location in the variable, reset the css on the filter text box 
@@ -488,57 +484,60 @@ var ViewModel = function() {
 		}
 	};
 
-	this.changeCSS = function(newCSS){
+	self.changeCSS = function(newCSS){
 		self.model.defaultLocations.forEach(function(location){
 			location.cssClass(newCSS);
 		});
 	};
 
-	this.changeNearbyCSS = function(index, newCSS){
-		//self.nearbyPlacesList()[index].cssClass(newCSS);
+	self.changeNearbyCSS = function(index, newCSS){
+		//self.model.nearbyPlaces()[index].cssClass(newCSS);
 		document.getElementById('nearby-parent-' + index).className = newCSS;
 	};
 
-	this.searchPlaces = function(){
+	self.searchPlaces = function(){
 		self.clearPlaces();
 		gMap.searchPlacesByType(self.currentPlace(), self.placeType.key);
 	};
 
+	self.getFavoritePlace = function(index){
+		return self.model.defaultLocations[index]
+	}
 
 
-	
+	self.getNearbyPlace = function(index){
+		return self.model.nearbyPlaces()[index];
+	}
 
 
-    this.clearPlaces = function(){
-    	///clear out the nearbyPlacesList array
-    	if (self.nearbyPlacesList().length > 0){
-    		self.nearbyPlacesList.removeAll();
+	self.getNearbyPlaces = function(){
+		return self.model.nearbyPlaces(); 
+	}
+
+    self.clearPlaces = function(){
+    	///clear out the nearbyPlaces array
+    	if (self.model.nearbyPlaces().length > 0){
+    		self.model.nearbyPlaces.removeAll();
 		}
     };
 
-    /*this.movePlaceToTop = function(index){
-    	var bufferPlace = new self.nearbyPlacesList()[index];
-    	//self.nearbyPlacesList()[0] = self.nearbyPlacesList()[index];
-    	//self.nearbyPlacesList()[index] = bufferPlace;
-    	console.log(bufferPlace);
-    	self.nearbyPlacesList.remove(self.nearbyPlacesList()[index]);
-    	self.nearbyPlacesList.unshift(bufferPlace);
-    	console.log(self.nearbyPlacesList());
-    }*/
-
-	this.changeNearbyPlaces = function(nearbyPlaces){
-		var self = this;
-
-		nearbyPlaces.forEach(function(place){
-			self.nearbyPlacesList.push(new Place(place));
-		});
+	self.addNearbyPlace = function(place){
+		//nearbyPlaces.forEach(function(place){
+			self.model.nearbyPlaces.push(new Place(place));
+		//});
 
 
 		///tell view that nearbyPlaces should be shown
-		self.model.nearbyVisible(true);
+		if (!self.model.nearbyVisible()){
+			self.model.nearbyVisible(true);
+		}
 	};
 
-	this.setCurrentWeather = function(weather){
+	self.activateNearbyPlace = function( place ){
+		gMap.activateCurrentMarker(place.index);
+	}
+
+	self.setCurrentWeather = function(weather){
 		weather.readableWindDirection = getWindDirection(weather.windBearing);
 		self.model.currentWeather(weather);
 	};
@@ -547,5 +546,3 @@ var ViewModel = function() {
 var viewModel = new ViewModel();
 
 ko.applyBindings(viewModel);
-
-
