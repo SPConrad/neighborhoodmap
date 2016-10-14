@@ -126,9 +126,7 @@ function Map()
   
 	self.activateCurrentMarker = function(index){
 		///create the new currentNearbyPlace variable
-		console.log(index);
 		self.currentNearbyPlace = self.nearbyMarkers[index];
-		console.log
 		viewModel.setCurrentNearbyPlace(index);
 		///change the marker color
 		self.currentNearbyPlace.setIcon('https://maps.google.com/mapfiles/ms/icons/orange-dot.png');
@@ -323,24 +321,10 @@ function Map()
 		//weather.forecastCity(location);
 	};
 
-
-	/*self.movePlaceToTop = function(index){
-		viewModel.movePlaceToTop(index);
-		var buffer = self.nearbyPlaces[0];
-		self.nearbyPlaces[0] = self.nearbyPlaces[index];
-		self.nearbyPlaces[index] = buffer; 
-
-		var buffer1 = self.nearbyMarkers[0];
-		self.nearbyMarkers[0] = self.nearbyMarkers[index];
-		self.nearbyMarkers[index] = buffer1;
-	}*/
-
 	self.showInfo = function(marker, div){
 		///assign which marker to open the info window above
-		console.log(marker);
 		self.infoWindow.marker = marker;
 		///assign the content
-		console.log(div);
 		self.infoWindow.setContent(div);
 		self.infoWindow.maxWidth = 500;
 		///open it

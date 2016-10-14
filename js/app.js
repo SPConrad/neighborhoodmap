@@ -322,7 +322,6 @@ var Place = function(data) {
 			return div; 
 	};
 
-	///console.log(self.infoWindow());
 
 };
 
@@ -389,8 +388,6 @@ var ViewModel = function() {
 
 	self.showDefault = function(index){
 		if (self.filterStringLength() > 0){
-			//console.log("hello world");
-			//var lowerString = self.filterString.toLowerCase();
 			if(self.model.defaultLocations[index].name.toLowerCase().includes(self.filterString().toLowerCase())){
 				if (self.model.defaultLocations[index].hidden === true){
 					self.model.defaultLocations[index].hidden = false;
