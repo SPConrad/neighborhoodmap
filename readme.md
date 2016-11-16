@@ -17,7 +17,7 @@ To run locally, download and run through a local server. Must be run through a l
 Attributions:
 This app uses the following 3rd party resourcse:
 * Google Maps API
-* Open Weather Map API
+* Dark Sky Weather API
 * KnockoutJS
 * Bootstrap
 * Jquery 
