@@ -267,7 +267,6 @@ var Place = function(data) {
 			spacesInName.push(i);
 		}
 	}
-
 	if (spacesInName.length > 2){
 		self.name = self.longName.slice(0, spacesInName[2]) + "... ";
 	} else {
@@ -322,7 +321,7 @@ var Place = function(data) {
 			return div; 
 	};
 
-
+	self.marker = "";
 };
 
 
@@ -440,7 +439,6 @@ var ViewModel = function() {
 		return self.filterString().length;
 	});
 
-
 	self.getCurrentPlace = ko.computed(function(){
 		if (self.currentPlace() == -1){
 			return -1;
@@ -498,7 +496,7 @@ var ViewModel = function() {
 	};
 
 	self.getFavoritePlace = function(index){
-		return self.model.defaultLocations[index]
+		return self.model.defaultLocations[index];
 	}
 
 

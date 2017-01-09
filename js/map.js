@@ -22,7 +22,7 @@ function Map()
 
 	self.largeMarker; 
 
-	self.defaultMarkers = [];
+	self.defaultMarkers = new Array(7);
 
 	self.nearbyMarkers = [];
 
@@ -59,8 +59,7 @@ function Map()
 
 		///create markers for the default locations
 		viewModel.placesList().forEach(function(place, index){
-			self.locateAndCreateMarkers(place, "large");
-			
+			self.locateAndCreateMarkers(place, "large");			
 		});
 
 		///resize the map when the browser is resized 
@@ -178,7 +177,6 @@ function Map()
 			var lng = results.geometry.location.lng();
 			var address = results.formatted_address;
 
-			
 			///add name after determining what part of address to get
 			var marker = new google.maps.Marker({
 				map: self.map,
@@ -200,8 +198,8 @@ function Map()
 						self.setCurrentPlace(markerObject.location.index);
 					}
 				});								
-					///add to default locations array
-				self.defaultMarkers.push(markerObject);
+				///add to default locations array
+				self.defaultMarkers[locationInfo.index] = markerObject;
 				var clickLink = document.getElementById('favorite-place-' + markerObject.location.index);
 				clickLink.onclick = function(){
 					self.setCurrentPlace(markerObject.location.index);
