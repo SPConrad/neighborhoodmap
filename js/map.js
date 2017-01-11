@@ -113,7 +113,7 @@ function Map()
 		///check to see if there is an old nearbyplace
 		if (place !== "") {
 			///reset the marker color
-			place.marker.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');	
+			place.setIcon('https://maps.google.com/mapfiles/ms/icons/green-dot.png');	
 		}
 	};
 
@@ -126,6 +126,7 @@ function Map()
 	self.activateCurrentMarker = function(index){
 		///create the new currentNearbyPlace variable
 		self.currentNearbyPlace = self.nearbyMarkers[index];
+		self.changeOldMarker();
 		viewModel.setCurrentNearbyPlace(index);
 		///change the marker color
 		self.currentNearbyPlace.setIcon('https://maps.google.com/mapfiles/ms/icons/orange-dot.png');
@@ -213,8 +214,6 @@ function Map()
 					///self.showInfo(this, viewModel.getNearbyPlace(results.index).infoWindow());	
 					///expand and change color of the current marker
 					self.activateCurrentMarker(results.index);
-					///change color of the old marker
-					self.changeOldMarker(self.currentNearbyPlace);
 				});
 				///add to the 
 				self.nearbyMarkers.push(marker);

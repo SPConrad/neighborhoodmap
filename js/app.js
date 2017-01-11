@@ -160,7 +160,7 @@ var placesTypes = [
 	}
 ];
 
-var loadFile= function(callback) {   
+/*var loadFile= function(callback) {   
 	///get JSON file with readable weather codes
     var xobj = new XMLHttpRequest();
         xobj.overrideMimeType("application/json");
@@ -171,7 +171,7 @@ var loadFile= function(callback) {
           }
     };
     xobj.send(null);  
- };
+ };*/
 
 ///self was fun
 var getWindDirection = function(bearing){
@@ -240,14 +240,12 @@ var Model = function () {
     self.placesTypes = ko.observableArray(placesTypes);
     self.currentPlace = self.defaultLocations[0];
     self.currentNearbyPlace = ko.observable();
-    self.currentWeather = ko.observable();
-    self.weatherForecast = ko.observableArray(); 
-    self.weatherCodes = ko.observable();
+    self.weather = ko.observable();
 
-    loadFile(function(response){
+    /*loadFile(function(response){
     	var parsedResponse = JSON.parse(response);
     	self.weatherCodes(parsedResponse);
-    });
+    });*/
 
 };
 
@@ -414,12 +412,8 @@ var ViewModel = function() {
 
 	self.selectedPlaceType = ko.observable();
 
-	self.currentWeather = ko.computed(function() {
-		return self.model.currentWeather();
-	});
-
-	self.weatherCodes = ko.computed(function() {
-		return self.model.weatherCodes(); 
+	self.weather = ko.computed(function() {
+		return self.model.weather();
 	});
 
 	self.placesTypes = ko.computed(function() {
@@ -533,8 +527,8 @@ var ViewModel = function() {
 	}
 
 	self.setCurrentWeather = function(weather){
-		weather.readableWindDirection = getWindDirection(weather.windBearing);
-		self.model.currentWeather(weather);
+		weather.readableWindDirection = getWindDirection(weather.currently.windBearing);
+		self.model.weather(weather);
 	};
 };
 

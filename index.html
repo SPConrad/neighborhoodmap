@@ -39,12 +39,12 @@
 					</div>
 				<!-- /ko -->
 				<div class="weather-container">
-					<!-- ko with: currentWeather -->
+					<!-- ko with: weather -->
 					<span class="hide-when-small" data-bind="text: 'The temperature in ' + name + ' is '"></span>
-					<span class="temp" data-bind="text: temperature + '&deg;\F'"></span>
+					<span class="temp" data-bind="text: currently.temperature + '&deg;\F'"></span>
 					<span class="hide-when-small">Current conditions are </span>
-					<span class="hide-when-small" data-bind="text: summary"></span>
-					<span class="hide-when-small" data-bind="text: ' with a ' + windSpeed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
+					<span class="hide-when-small" data-bind="text: currently.summary"></span>
+					<span class="hide-when-small" data-bind="text: ' with a ' + currently.windSpeed + ' mile per hour ' + readableWindDirection + '  wind'"></span>
 					<!-- /ko -->
 				</div>
 			</div>

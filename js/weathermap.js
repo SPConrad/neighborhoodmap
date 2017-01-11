@@ -10,10 +10,12 @@ var Weather = function() {
 
 	///function to get current weather by latLng
 	self.currentLatLngWeather = function(location) {
-		return currentWeatherByCoord(location); 
+		forecastByCoord(location); 
 	};
 };
-function currentWeatherByCoord(location) {
+
+
+function forecastByCoord(location) {
 	///generate a request url
 	var weatherURL = darkSkyURLBase + darkSkyApiKey + location.lat + "," + location.lng;
 	//var url = weatherApiUrlBase + currentWeatherUrl + 'lat=' + location.lat() + '&lon=' + location.lng() + weatherApiKey;
@@ -26,8 +28,7 @@ function currentWeatherByCoord(location) {
 	});
 
 	request.done(function(data){
-		var weatherData = data.currently;
-			viewModel.setCurrentWeather(weatherData);
+			viewModel.setCurrentWeather(data);
 	});
 
 	request.fail(function(data){
